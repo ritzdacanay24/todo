@@ -33,6 +33,10 @@ import configureStore from './configureStore';
 // Import i18n messages
 import { translationMessages } from './i18n';
 
+import 'react-notifications/lib/notifications.css';
+import {NotificationContainer} from 'react-notifications';
+
+
 // Create redux store with history
 const initialState = {};
 const store = configureStore(initialState, history);
@@ -43,6 +47,7 @@ const render = messages => {
     <Provider store={store}>
       <LanguageProvider messages={messages}>
         <ConnectedRouter history={history}>
+        <NotificationContainer/>
           <App />
         </ConnectedRouter>
       </LanguageProvider>
