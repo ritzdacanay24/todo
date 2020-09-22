@@ -1,5 +1,5 @@
 {
-  "name": "Grocery todo",
+  "name": "Grocery-todo",
   "version": "4.0.0",
   "description": "Grocery todo application",
   "repository": {
@@ -42,7 +42,9 @@
     "test": "cross-env NODE_ENV=test jest --coverage",
     "test:watch": "cross-env NODE_ENV=test jest --watchAll",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
-    "prettify": "prettier --write"
+    "prettify": "prettier --write",
+    "myStart": " start npm run start && npm run socketSever",
+    "socketSever": "cd ../todo_api/ && start npm start"
   },
   "browserslist": [
     "last 2 versions",
@@ -98,7 +100,7 @@
     "react-infinite-scroller": "^1.2.4",
     "react-intl": "2.8.0",
     "react-lazyload": "^3.0.0",
-    "react-notifications": "^1.7.0",
+    "react-notifications": "^1.7.2",
     "react-redux": "7.0.2",
     "react-router-dom": "5.0.0",
     "react-validation": "^3.0.7",
