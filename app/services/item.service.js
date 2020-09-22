@@ -41,6 +41,9 @@ class ItemService {
     async moveBulkGroupItemsByAisle(aisleName) {
         return await API.put(`items/moveBulkItems/${aisleName}`);
     }
+    async getOverview(userId) {
+        return await API.get(`items/overview/${userId}`);
+    }
 
 }
 
