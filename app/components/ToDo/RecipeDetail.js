@@ -4,7 +4,9 @@ import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Image from 'react-bootstrap/Image';
 import queryString from 'query-string'
-import API from '../../api/API';
+
+import RecipeService from '../../services/recipe.service';
+import ItemService from '../../services/item.service';
 
 export default class RecipeDetail extends Component {
 
@@ -25,7 +27,7 @@ export default class RecipeDetail extends Component {
 
     getRecipeById = async recipeId => {
         try {
-            let res = await API.get(`recipes/${recipeId}/recipeId`);
+            let res = await RecipeService.getRecipeById(recipeId);
             this.setState({ details: res.data })
         } catch (e) {
             console.log(e)
@@ -49,7 +51,7 @@ export default class RecipeDetail extends Component {
         });
 
         try {
-            await API.post(`items/saveBulkItems/${currentUserId}/${currentView._id}`, details.ingredients);
+            await ItemService.addBulkItems(currentUserId, currentView._id, details.ingredients)
         } catch (e) {
             console.log(e)
         }
@@ -57,7 +59,7 @@ export default class RecipeDetail extends Component {
 
     onClickDeleteRecipe = async () => {
         try {
-            await API.delete(`recipes/${this.state.recipeId}`);
+            await ItemService.deleteRecipeById(this.state.recipeId);
             this.props.history.push({ pathname: `/ToDo/${this.props.match.params.id}/MyRecipes` })
         } catch (e) {
             console.log(e)

@@ -11,7 +11,8 @@ const CreateList = ({ createNewList }) => {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    const onSubmit = i => {
+    const onSubmit = e => {
+        e.preventDefault();
         createNewList(listName);
         setShow(false)
         setListName("")
@@ -26,6 +27,7 @@ const CreateList = ({ createNewList }) => {
     }
 
     const handleOnChange = ev => {
+        ev.preventDefault();
         setListName(ev.target.value)
     }
 
@@ -33,12 +35,12 @@ const CreateList = ({ createNewList }) => {
         <>
             <Button className="btn-orange" onClick={handleShow}> <i className="fa fa-plus" aria-hidden="true"></i> Add List </Button>
 
-            <Modal show={show} onHide={handleClose} centered>
+            <Modal show={show} onHide={handleClose} centered  backdrop="static">
                 <Modal.Header closeButton>
                     <Modal.Title> <i className="fa fa-list" aria-hidden="true"></i> New List</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form>
+                    <Form onSubmit={onSubmit}>
                         <Form.Group controlId="listName">
                             <Form.Label>List Name</Form.Label>
                             <Form.Control name="name" type="text" ref={inputRef} autoComplete="off" placeholder="Enter list name" className="form-control" onChange={ev => handleOnChange(ev)} />

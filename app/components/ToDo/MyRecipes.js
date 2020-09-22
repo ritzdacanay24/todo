@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import { Link } from 'react-router-dom';
-import API from '../../api/API'
+
+import RecipeService from '../../services/recipe.service';
 
 class MyRecipes extends Component {
 
@@ -27,7 +28,7 @@ class MyRecipes extends Component {
 
     getRecipes = async () => {
         try {
-            let res = await API.get(`recipes/${this.state.currentUserId}`);
+            let res = await RecipeService.getRecipeByUserId(this.state.currentUserId);
             if (this.mounted) this.setState({ details: res.data });
         } catch (e) {
             console.log(e)

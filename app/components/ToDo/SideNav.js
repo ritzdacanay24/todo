@@ -6,7 +6,6 @@ import CreateListSettings from './CreateListSettings';
 import logo from '../../images/groceryTodo-1.png';
 
 const SideNav = ({ match, lists, getListDetails, createNewList, updateList, deleteList }) => {
-
     const currentTab = match.params.tab == undefined ? 'MyList' : match.params.tab;
 
     const [searchTerm, setSearchTerm] = useState("");

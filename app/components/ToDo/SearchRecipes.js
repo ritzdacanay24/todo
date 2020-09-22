@@ -9,7 +9,9 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
-import API from '../../api/API';
+
+import SpoonacularService from '../../services/spoonacular.service';
+import RecipeService from '../../services/recipe.service';
 
 class SearchRecipes extends Component {
 
@@ -47,8 +49,8 @@ class SearchRecipes extends Component {
           return
         }
         try {
-          const res = await API.post('spoonacular/extractRecipeFromUrl', { url: this.state.recipe });
-
+          const res = await SpoonacularService.extractRecipeFromUrl(this.state.recipe);
+          console.log(res)
           this.setState({ details: res.data, recipeList: [] });
         } catch (e) {
           console.log(e)
@@ -56,7 +58,7 @@ class SearchRecipes extends Component {
         break;
       case 'Search by recipe name':
         try {
-          const res = await API.get(`spoonacular/searchRecipe/${this.state.limit}/total/${this.state.startFrom}/startFrom/${this.state.recipe}/recipe`, { url: this.state.recipe });
+          const res = await SpoonacularService.searchByRecipeName(this.state.recipe, this.state.startFrom, this.state.limit);
           if (!res.data.results.length) {
             alert('No recipe found with that name')
             return
@@ -71,7 +73,7 @@ class SearchRecipes extends Component {
 
   viewRecipeDetailsById = async recipeId => {
     try {
-      const res = await API.get(`spoonacular/searchRecipeById/${recipeId}`);
+      const res = await SpoonacularService.getRecipeInfoById(recipeId);
       this.setState({ details: res.data });
     } catch (e) {
       console.log(e)
@@ -107,7 +109,8 @@ class SearchRecipes extends Component {
     }
 
     try {
-      await API.post(`recipes/`, params);
+
+      await RecipeService.addRecipeAction(params);
     } catch (e) {
       console.log(e)
     }
@@ -130,7 +133,7 @@ class SearchRecipes extends Component {
       this.state.details.ingredients.length && this.state.details.ingredients.map((item, index) => (
         <ListGroup.Item key={index}>
           <Image className="img-fluid" style={{ maxHeight: "40px", minWidth: "40px" }} src={`${this.props.imageBaseUrl.ingredientUrl}${item.image}`} rounded />
-          <span className="float-right">{item.amount} {' '} {item.name}</span>
+          <span className="float-right">{item.amount.toFixed(0)} {' '} {item.name}</span>
         </ListGroup.Item>
       ))
     )
@@ -166,15 +169,17 @@ class SearchRecipes extends Component {
           <hr />
         </div>
 
-        <InputGroup>
-          <InputGroup.Prepend>
-            <Button className="btn-orange" onClick={ev => this.searchRecipe(ev)}>Search </Button>
-          </InputGroup.Prepend>
-          <FormControl type="search" name="recipe" autoComplete="off" autoFocus placeholder={this.state.searchBy} className="form-control" value={this.state.recipe} onChange={ev => this.handleOnChange(ev)} />
-          <DropdownButton variant="outline-primary" title={this.state.searchBy} id="input-group-dropdown-2" >
-            {this.mapSearchCriteria()}
-          </DropdownButton>
-        </InputGroup>
+        <Form onSubmit={this.searchRecipe}>
+          <InputGroup>
+            <InputGroup.Prepend>
+              <Button className="btn-orange" onClick={ev => this.searchRecipe(ev)}>Search </Button>
+            </InputGroup.Prepend>
+            <FormControl type="search" name="recipe" autoComplete="off" autoFocus placeholder={this.state.searchBy} className="form-control" value={this.state.recipe} onChange={ev => this.handleOnChange(ev)} />
+            <DropdownButton variant="outline-primary" title={this.state.searchBy} id="input-group-dropdown-2" >
+              {this.mapSearchCriteria()}
+            </DropdownButton>
+          </InputGroup>
+        </Form>
 
         <br></br>
         <p>To get started, select the type of search on the right hand side. You can search by entering the recipe website or by searching any recipes. </p>
@@ -203,19 +208,19 @@ class SearchRecipes extends Component {
                 <Card.Title>{this.state.details.title}</Card.Title>
 
                 <Card.Title> Summary: </Card.Title>
-                <Card.Text> {this.state.details.summary} </Card.Text>
+                <Card.Text dangerouslySetInnerHTML={{__html: this.state.details.summary}} />
 
                 <Card.Title> Cooking Time: </Card.Title>
-                <Card.Text> {this.state.details.cookTime} </Card.Text>
+                <Card.Text> {this.state.details.cookTime || 'N/A'} </Card.Text>
 
                 <Card.Title> Serving: </Card.Title>
                 <Card.Text> {this.state.details.servings} </Card.Text>
 
                 <Card.Title> Instructions: </Card.Title>
-                <Card.Text> {this.state.details.instructions} </Card.Text>
+                <Card.Text> {this.state.details.instructions|| 'No Instructions Added'} </Card.Text>
 
                 <Card.Title> Steps: </Card.Title>
-                <ul> {this.getSteps()} </ul>
+                <ul> {this.getSteps() || 'No Steps Added'} </ul>
 
                 <Card.Title> Ingredients: </Card.Title>
                 <ListGroup> {this.listIngredient()} </ListGroup>
