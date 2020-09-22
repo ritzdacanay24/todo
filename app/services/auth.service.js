@@ -28,8 +28,18 @@ class AuthService {
     });
   }
 
-  getCurrentUser() {
+  getCurrentUserStorage() {
     return JSON.parse(localStorage.getItem('user'));;
+  }
+
+  async getCurrentUser() {
+    let user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+      let res = await API.get(`users/${user.userId}`);
+      return res.data;
+    } else {
+      return false
+    }
   }
 }
 
