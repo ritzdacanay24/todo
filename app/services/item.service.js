@@ -21,7 +21,7 @@ class ItemService {
         return await API.post(`items/saveBulkItems/${userId}/${listId}`, bulkItems);
     }
     async duplicateItemOrItem(userId, listId, bulkItems) {
-        return await API.post(`items/saveBulkItems/${userId}/${listId}`, bulkItems);
+        return await API.post(`items/duplicateItem/${userId}/${listId}`, bulkItems);
     }
     async deleteBulkItemsById(listId) {
         return await API.delete(`items/deleteBulkItems/${listId}`);
