@@ -25,6 +25,12 @@ const required = value => {
 export default class Login extends Component {
     constructor(props) {
         super(props);
+
+        // redirect to home if already logged in
+        if (AuthService.getCurrentUserStorage()) { 
+            this.props.history.push('/');
+        }
+
         this.handleLogin = this.handleLogin.bind(this);
         this.onChangeUsername = this.onChangeUsername.bind(this);
         this.onChangePassword = this.onChangePassword.bind(this);
