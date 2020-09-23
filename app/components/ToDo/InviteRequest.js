@@ -1,7 +1,8 @@
-import Axios from 'axios';
-import queryString from 'query-string'; 
-import Jumbotron from 'react-bootstrap/Jumbotron';
+
 import React, { useState, useEffect } from 'react';
+import queryString from 'query-string';
+import Jumbotron from 'react-bootstrap/Jumbotron';
+import ListService from "../../services/list.service";
 
 const InviteRequests = props => {
     let params = queryString.parse(props.location.search);
@@ -9,19 +10,18 @@ const InviteRequests = props => {
 
     const getSub = async () => {
         try {
-            let res = await Axios.put(`http://localhost:5000/api/lists/subscribers/${params.listId}/${params.toUser}`);
-            props.location.search = {}
+            let res = await ListService.saveSubscribers(params.listId, params.toUser);
             setMessage(res.data.message)
         } catch (e) {
-            if(e.response)
-            props.location.search = {}
-            setMessage(e.response.data)
+            if (e.response) {
+                setMessage(e.response.data)
+            }
         }
     }
 
     useEffect(() => {
         if (params.listId && params.toUser) getSub()
-    }, []); 
+    }, []);
 
     return (
         <Jumbotron>

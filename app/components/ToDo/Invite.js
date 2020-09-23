@@ -7,6 +7,7 @@ import log from '../../images/default.jpg';
 
 import ListService from '../../services/list.service';
 import UserService from '../../services/user.service';
+import { NotificationManager } from 'react-notifications';
 
 const Invite = props => {
 
@@ -49,7 +50,8 @@ const Invite = props => {
             toId: user._id,
             listId: props.currentView._id
         }
-        await ListService.listInvite(params);
+        let res = await ListService.listInvite(params);
+        NotificationManager.success('Invite sent');
     }
 
     return (

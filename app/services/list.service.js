@@ -21,6 +21,10 @@ class ListService {
   async listInvite(params) {
     return await API.post(`lists/listInvite`, params);
   }
+
+  async saveSubscribers(lsitId, toUser) {
+    return await API.put(`lists/subscribers/${lsitId}/${toUser}`);
+  }
   
 }
 

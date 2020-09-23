@@ -115,7 +115,7 @@ export default class ForgotPassword extends Component {
 
     render() {
         return (
-            <header className="login" style={{paddingBottom: "calc(30.5rem)"}}>
+            <header className="login" style={{ paddingBottom: "calc(30.5rem)" }}>
                 <div className="container">
                     <div className="row justify-content-md-center">
                         <div className="col-md-7">
@@ -140,27 +140,31 @@ export default class ForgotPassword extends Component {
                                         }}
                                     >
 
-                                        <InputGroup className="mb-3">
-                                            <FormControl type="password"
-                                                className="form-control"
-                                                placeholder="Enter password"
-                                                name="password"
-                                                value={this.state.password}
-                                                onChange={this.onChangePassword}
-                                                validations={[required]} />
-                                        </InputGroup>
-
-                                        <div className="form-group">
-                                            <button
-                                                className="btn btn-primary float-right"
-                                                disabled={this.state.loading || !this.state.password}
-                                            >
-                                                {this.state.loading && (
-                                                    <span className="spinner-border spinner-border-sm"></span>
-                                                )}
-                                                <span> Submit </span>
-                                            </button>
-                                        </div>
+                                        {!this.state.isPasswordUpdated &&
+                                            <>
+                                                <InputGroup className="mb-3">
+                                                    <FormControl type="password"
+                                                        className="form-control"
+                                                        placeholder="Enter password"
+                                                        name="password"
+                                                        value={this.state.password}
+                                                        onChange={this.onChangePassword}
+                                                        validations={[required]}
+                                                    />
+                                                </InputGroup>
+                                                <div className="form-group">
+                                                    <button
+                                                        className="btn btn-primary float-right"
+                                                        disabled={this.state.loading || !this.state.password}
+                                                    >
+                                                        {this.state.loading && (
+                                                            <span className="spinner-border spinner-border-sm"></span>
+                                                        )}
+                                                        <span> Submit </span>
+                                                    </button>
+                                                </div>
+                                            </>
+                                        }
 
                                         <div className="form-group">
                                             <Link to="/Login">
