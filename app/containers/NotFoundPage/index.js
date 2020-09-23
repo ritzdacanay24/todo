@@ -7,13 +7,17 @@
 
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
+import Jumbotron from 'react-bootstrap/Jumbotron';
 
 import messages from './messages';
 
 export default function NotFound() {
   return (
-    <h1>
-      <FormattedMessage {...messages.header} />
-    </h1>
+    <Jumbotron className="text-center bg-white">
+      <h1>
+        <FormattedMessage {...messages.header} />
+      </h1>
+    </Jumbotron>
+
   );
 }
