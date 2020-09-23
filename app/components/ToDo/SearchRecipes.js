@@ -13,6 +13,8 @@ import Col from 'react-bootstrap/Col';
 import SpoonacularService from '../../services/spoonacular.service';
 import RecipeService from '../../services/recipe.service';
 
+import { NotificationManager } from 'react-notifications';
+
 class SearchRecipes extends Component {
 
   constructor(props) {
@@ -111,6 +113,7 @@ class SearchRecipes extends Component {
     try {
 
       await RecipeService.addRecipeAction(params);
+      NotificationManager.success('Receipe saved');
     } catch (e) {
       console.log(e)
     }
