@@ -27,7 +27,8 @@ export default class ForgotPassword extends Component {
         this.state = {
             email: "",
             loading: false,
-            message: ""
+            message: "",
+            isSent: false
         };
     }
 
@@ -56,7 +57,8 @@ export default class ForgotPassword extends Component {
                         this.setState({
                             loading: false,
                             message: res.data,
-                            class: "alert alert-success"
+                            class: "alert alert-success",
+                            isSent: true
                         });
                     } catch (e) {
                         this.setState({
@@ -87,7 +89,7 @@ export default class ForgotPassword extends Component {
 
     render() {
         return (
-            <header className="login" style={{paddingBottom: "calc(34.1rem - 3.6rem)"}}>
+            <header className="login" style={{ paddingBottom: "calc(34.1rem - 3.6rem)" }}>
                 <div className="container">
                     <div className="row justify-content-md-center">
                         <div className="col-md-7">
@@ -112,35 +114,42 @@ export default class ForgotPassword extends Component {
                                         }}
                                     >
 
-                                        <InputGroup className="mb-3">
-                                            <FormControl type="email"
-                                                className="form-control"
-                                                placeholder="Enter email"
-                                                name="email"
-                                                value={this.state.email}
-                                                onChange={this.onChangeEmail}
-                                                validations={[required]} />
-                                        </InputGroup>
 
-                                        <div className="form-group">
-                                            <button
-                                                className="btn btn-primary float-right"
-                                                disabled={this.state.loading}
-                                            >
-                                                {this.state.loading && (
-                                                    <span className="spinner-border spinner-border-sm"></span>
-                                                )}
-                                                <span> Submit </span>
-                                            </button>
-                                        </div>
+
+                                        {
+                                            !this.state.isSent &&
+
+                                            <>
+                                                <InputGroup className="mb-3">
+                                                    <FormControl type="email"
+                                                        className="form-control"
+                                                        placeholder="Enter email"
+                                                        name="email"
+                                                        value={this.state.email}
+                                                        onChange={this.onChangeEmail}
+                                                        validations={[required]} />
+                                                </InputGroup>
+                                                <div className="form-group">
+                                                    <button
+                                                        className="btn btn-primary float-right"
+                                                        disabled={this.state.loading}
+                                                    >
+                                                        {this.state.loading && (
+                                                            <span className="spinner-border spinner-border-sm"></span>
+                                                        )}
+                                                        <span> Submit </span>
+                                                    </button>
+                                                </div>
+                                            </>
+                                        }
 
                                         <div className="form-group">
                                             <Link to="/Login">
                                                 <button
                                                     className="btn btn-outline-info float-left"
-                                                    
+
                                                     type="button"
-                                                    
+
                                                 >
                                                     Log-in
                                             </button>
