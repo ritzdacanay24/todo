@@ -62,7 +62,6 @@ export default class Login extends Component {
         if (this.checkBtn.context._errors.length === 0) {
             AuthService.login(this.state.email, this.state.password).then(
                 async (res) => {
-
                     try {
                         await KrogerService.redirectToGroceryAppAfterLoginByClientCredentials();
                         window.location.href = '/ToDo';
@@ -94,79 +93,84 @@ export default class Login extends Component {
 
     render() {
         return (
-            <div className="container" style={{ paddingTop: "80px" }}>
-                <div className="row justify-content-md-center">
-                    <div className="col-md-7">
-                        <Card className="text-center">
-                            <Card.Header style={{ borderBottom: "none" }}>
-                                <img src={check} style={{ width: "250px" }} />
-                            </Card.Header>
-                            <Card.Body>
-                                <Card.Title>Sign in to Grocery todo App</Card.Title>
-                                {this.state.message && (
+            <header className="login" style={{paddingBottom: "calc(34.1rem - 4.6rem)"}}>
+                <div className="container">
+                    <div className="row justify-content-md-center">
+                        <div className="col-md-7">
+                            <Card className="text-center shadow">
+                                <Card.Header style={{ borderBottom: "none" }}>
+                                    <img src={check} style={{ width: "250px" }} />
+                                </Card.Header>
+                                <Card.Body>
+                                    <Card.Title>Sign in to Grocery todo App</Card.Title>
+                                    {this.state.message && (
                                         <div className="form-group">
                                             <div className="alert alert-danger" role="alert">
                                                 {this.state.message}
                                             </div>
                                         </div>
                                     )}
-                                <Form
-                                    onSubmit={this.handleLogin}
-                                    ref={c => {
-                                        this.form = c;
-                                    }}
-                                >
-                                    <InputGroup className="mb-3">
-                                        <InputGroup.Prepend>
-                                            <InputGroup.Text id="inputGroup-sizing-default" style={{ minWidth: "100px", maxWidth: "100px" }}>Email</InputGroup.Text>
-                                        </InputGroup.Prepend>
-                                        <FormControl type="text"
-                                            className="form-control"
-                                            name="email"
-                                            placeholder="Enter email"
-                                            value={this.state.email}
-                                            onChange={this.onChangeUsername}
-                                            validations={[required]} />
-                                    </InputGroup>
-
-                                    <InputGroup className="mb-3">
-                                        <InputGroup.Prepend>
-                                            <InputGroup.Text id="inputGroup-sizing-default" style={{ minWidth: "100px", maxWidth: "100px" }}>Password</InputGroup.Text>
-                                        </InputGroup.Prepend>
-                                        <FormControl type="password"
-                                            className="form-control"
-                                            placeholder="Enter password"
-                                            name="password"
-                                            value={this.state.password}
-                                            onChange={this.onChangePassword}
-                                            validations={[required]} />
-                                    </InputGroup>
-
-                                    <div className="form-group">
-                                        <button
-                                            className="btn btn-primary float-left"
-                                            disabled={this.state.loading}
-                                        >
-                                            {this.state.loading && (
-                                                <span className="spinner-border spinner-border-sm"></span>
-                                            )}
-                                            <span> Sign In </span>
-                                        </button>
-                                    </div>
-                                    
-                                    <CheckButton
-                                        style={{ display: "none" }}
+                                    <Form
+                                        onSubmit={this.handleLogin}
                                         ref={c => {
-                                            this.checkBtn = c;
+                                            this.form = c;
                                         }}
-                                    />
-                                </Form>
-                                <Button variant="primary" as={Link} to="/Register" className="float-right">Register</Button>
-                            </Card.Body>
-                        </Card>
+                                    >
+                                        <InputGroup className="mb-3">
+                                            <InputGroup.Prepend>
+                                                <InputGroup.Text id="inputGroup-sizing-default" style={{ minWidth: "100px", maxWidth: "100px" }}>Email</InputGroup.Text>
+                                            </InputGroup.Prepend>
+                                            <FormControl type="text"
+                                                className="form-control"
+                                                name="email"
+                                                placeholder="Enter email"
+                                                value={this.state.email}
+                                                onChange={this.onChangeUsername}
+                                                validations={[required]} />
+                                        </InputGroup>
+
+                                        <InputGroup className="mb-3">
+                                            <InputGroup.Prepend>
+                                                <InputGroup.Text id="inputGroup-sizing-default" style={{ minWidth: "100px", maxWidth: "100px" }}>Password</InputGroup.Text>
+                                            </InputGroup.Prepend>
+                                            <FormControl type="password"
+                                                className="form-control"
+                                                placeholder="Enter password"
+                                                name="password"
+                                                value={this.state.password}
+                                                onChange={this.onChangePassword}
+                                                validations={[required]} />
+                                        </InputGroup>
+
+                                        <div className="form-group">
+                                            <button
+                                                className="btn btn-primary float-left"
+                                                disabled={this.state.loading}
+                                            >
+                                                {this.state.loading && (
+                                                    <span className="spinner-border spinner-border-sm"></span>
+                                                )}
+                                                <span> Sign In </span>
+                                            </button>
+                                        </div>
+
+                                        <CheckButton
+                                            style={{ display: "none" }}
+                                            ref={c => {
+                                                this.checkBtn = c;
+                                            }}
+                                        />
+                                    </Form>
+                                    <Button variant="primary" as={Link} to="/Register" className="float-right">Register</Button>
+                                    <div className="form-group">
+                                        Forgot password? <Link to="/ForgotPassword">Reset It</Link>
+                                    </div>
+                                </Card.Body>
+                            </Card>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </header>
         );
     }
 }
