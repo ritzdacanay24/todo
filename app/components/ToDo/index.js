@@ -10,17 +10,19 @@ import CreateItem from './CreateItem';
 import RecipeDetail from './RecipeDetail';
 import MealPlan from './MealPlan';
 import Invite from './Invite';
-import ToDoStyles from '../ToDo/styles';
+import ToDoStyles from './styles';
 
 import ListService from '../../services/list.service';
 import ItemService from '../../services/item.service';
+
+import { NotificationManager } from 'react-notifications';
 
 class ToDo extends Component {
 
     constructor(props) {
         super(props);
         const userId = props.currentUser ? props.currentUser._id : false
-        console.log(userId, 'asdfasdf')
+
         this.state = {
             currentUser: userId,
             imageBaseUrl: {
@@ -90,6 +92,9 @@ class ToDo extends Component {
         }
     }
 
+    displayErrorMessage = () => {
+        NotificationManager.error('Sorry, something went wrong');
+    }
 
     getListsByUserId = async () => {
         try {
@@ -154,12 +159,14 @@ class ToDo extends Component {
         }
         try {
             let res = await ListService.createNewList(updateItems);
+            console.log('res', res)
             this.setState({
                 currentView: res.data,
                 lists: [...this.state.lists, res.data]
             }, () => this.setCurrentViewInfo())
+            NotificationManager.success('List added');
         } catch (e) {
-            console.log(e)
+            this.displayErrorMessage()
         }
     }
 
@@ -170,8 +177,9 @@ class ToDo extends Component {
                 lists: this.state.lists.map(el => (el._id === list._id ? list : el)),
                 currentView: list
             });
+            NotificationManager.success('List updated');
         } catch (e) {
-            console.log(e)
+            this.displayErrorMessage()
         }
     }
 
@@ -182,8 +190,9 @@ class ToDo extends Component {
                 lists: this.state.lists.filter(x => x._id !== listId),
                 currentView: 0
             }, () => this.setCurrentViewInfo())
+            NotificationManager.success('List deleted');
         } catch (e) {
-            console.log(e)
+            this.displayErrorMessage()
         }
     }
     //END: list actions
@@ -196,16 +205,22 @@ class ToDo extends Component {
         item.listId = this.state.currentView._id
         item.createdBy = this.state.currentUser
 
-        let res = await ItemService.addItem(item);
-        this.socket.emit('CREATE_TASK', res.data, this.state.currentView._id);
+        try {
+            let res = await ItemService.addItem(item);
+            this.socket.emit('CREATE_TASK', res.data, this.state.currentView._id);
+            NotificationManager.success('Item added');
+        } catch (e) {
+            this.displayErrorMessage()
+        }
     }
 
     updateItem = async item => {
         try {
             await ItemService.updateItemById(item);
             this.setState({ items: this.state.items.map(el => (el._id === item._id ? item : el)) }, () => this.updateItemSocket());
+            NotificationManager.success('Item updated');
         } catch (e) {
-            alert(e.response.data)
+            this.displayErrorMessage()
         }
     }
 
@@ -213,8 +228,9 @@ class ToDo extends Component {
         try {
             await ItemService.deleteItemById(itemId);
             this.setState({ items: this.state.items.filter(x => x._id !== itemId) }, () => this.updateItemSocket());
+            NotificationManager.success('Item deleted');
         } catch (e) {
-            alert(e.response.data)
+            this.displayErrorMessage()
         }
     }
 
@@ -224,7 +240,7 @@ class ToDo extends Component {
             await ItemService.updateCheckOrUncheckItem(message);
             this.setState({ items: this.state.items.map(el => (el._id === message._id ? { ...el, message } : el)) }, () => this.updateItemSocket());
         } catch (e) {
-            alert(e.response.data)
+            this.displayErrorMessage()
         }
     }
 
@@ -234,7 +250,7 @@ class ToDo extends Component {
             await ItemService.updateBulkCheckOrUncheckItems(listId, item.completedDate);
             this.setState({ items: this.state.items.map(el => (el.listId === listId ? { ...el, completedDate: item.completedDate } : el)) }, () => this.updateItemSocket());
         } catch (e) {
-            console.log(e)
+            this.displayErrorMessage()
         }
     }
 
@@ -242,23 +258,20 @@ class ToDo extends Component {
         try {
             await ItemService.deleteBulkItemsById(listId);
             this.setState({ items: this.state.items.filter(x => x.listId !== listId) }, () => this.updateItemSocket());
+            NotificationManager.success('Successfylly deleted bulk items');
         } catch (e) {
-            console.log(e)
+            this.displayErrorMessage()
         }
     }
 
     duplicateItem = async itemId => {
         let duplicatedItem = this.state.items.filter(x => x._id === itemId);
-
-        for (let i = 0; i < duplicatedItem.length; i++) {
-            if (i < 0)
-                duplicatedItem[i].original = duplicatedItem[i].original + ' coppppy';
-        }
         try {
             let res = await ItemService.duplicateItemOrItem(this.state.currentUser, this.state.currentView._id, duplicatedItem);
             this.setState({ items: this.state.items.concat(res.data) }, () => this.updateItemSocket());
+            NotificationManager.success('Successfylly duplicated item');
         } catch (e) {
-            console.log(e)
+            this.displayErrorMessage()
         }
     }
 
@@ -268,8 +281,9 @@ class ToDo extends Component {
         try {
             let res = await ItemService.duplicateItemOrItem(this.state.currentUser, this.state.currentView._id, duplicatedItem);
             this.setState({ items: this.state.items.concat(res.data) }, () => this.updateItemSocket());
+            NotificationManager.success('Successfylly duplicated bulk items');
         } catch (e) {
-            console.log(e)
+            this.displayErrorMessage()
         }
     }
 
@@ -277,8 +291,9 @@ class ToDo extends Component {
         try {
             await ItemService.deleteBulkGroupItemsByAisle(listId, aisleName);
             this.setState({ items: this.state.items.filter(x => x.aisle !== aisleName) }, () => this.updateItemSocket());
+            NotificationManager.success('Successfylly deleted group');
         } catch (e) {
-            console.log(e)
+            this.displayErrorMessage()
         }
     }
 
@@ -289,7 +304,7 @@ class ToDo extends Component {
             await ItemService.updateBulkGroupItemsByAisle(listId, item.aisle, item.completedDate);
             this.setState({ items: this.state.items.map(el => (el.aisle == item.aisle ? { ...el, completedDate: item.completedDate } : el)) }, () => this.updateItemSocket());
         } catch (e) {
-            console.log(e)
+            this.displayErrorMessage()
         }
     }
 
@@ -297,8 +312,9 @@ class ToDo extends Component {
         try {
             await ItemService.moveItem(itemId, aisleName);
             this.setState({ items: this.state.items.map(el => (el._id == itemId ? { ...el, aisle: aisleName } : el)) }, () => this.updateItemSocket());
+            NotificationManager.success('Successfylly moved item');
         } catch (e) {
-            console.log(e)
+            this.displayErrorMessage()
         }
     }
 
@@ -314,11 +330,11 @@ class ToDo extends Component {
         return (
             <>
                 <ToDoStyles />
-                <div className="container" style={{ paddingTop: "80px", paddingBottom: "84px" }}>
+                <div className="container" style={{ paddingTop: "80px", paddingBottom: "60px" }}>
 
                     <div className="row">
                         <div className="col-lg-3 d-none d-sm-block">
-                            <div className="sticky-top sticky-top-card-side">
+                            <div className="sticky-top sticky-top-card-side shadow">
                                 <SideNav
                                     {...this.props}
                                     createNewList={this.createNewList}
@@ -335,7 +351,7 @@ class ToDo extends Component {
                             {
                                 !currentView._id &&
                                 <div className="card">
-                                    <div className="card-body" style={{ minHeight: "calc(100vh - 179px)", margin: "0 auto", display: "block" }}>
+                                    <div className="card-body" style={{ minHeight: "calc(100vh - 142px)", margin: "0 auto"}}>
                                         <h4>Please select a list on the left to view the details</h4>
                                     </div>
                                 </div>
@@ -343,7 +359,7 @@ class ToDo extends Component {
 
                             {
                                 currentView._id &&
-                                <div className="card">
+                                <div className="card shadow">
                                     <div className="card-header sticky-top sticky-top-card-header">
                                         <h4 className="float-left ">
                                             <span className="text-overflow">{currentView.name}</span>
@@ -361,7 +377,7 @@ class ToDo extends Component {
                                                     calculateTotalCost={this.calculateTotalCost}
                                                 />
                                             </li>
-                                            <li><Invite /> </li>
+                                            <li><Invite currentUser={this.props.currentUser} currentView={currentView}/> </li>
                                         </ul>
 
                                     </div>
