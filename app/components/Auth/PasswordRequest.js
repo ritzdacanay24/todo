@@ -4,8 +4,8 @@ import CheckButton from "react-validation/build/button";
 import Card from 'react-bootstrap/Card';
 import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
-import check from '../images/todo.png';
-import AuthService from "../services/auth.service";
+import check from '../../images/todo.png';
+import AuthService from "../../services/auth.service";
 import { Link } from 'react-router-dom';
 
 const required = value => {
@@ -18,7 +18,7 @@ const required = value => {
     }
 };
 
-export default class ForgotPassword extends Component {
+export default class PasswordRequest extends Component {
     constructor(props) {
         super(props);
         this.handleLogin = this.handleLogin.bind(this);

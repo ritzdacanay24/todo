@@ -5,9 +5,9 @@ import CheckButton from "react-validation/build/button";
 import { isEmail } from "validator";
 import { Link } from 'react-router-dom';
 import Card from 'react-bootstrap/Card';
-import check from '../images/todo.png';
+import check from '../../images/todo.png';
 
-import AuthService from "../services/auth.service";
+import AuthService from "../../services/auth.service";
 
 const required = value => {
   if (!value) {

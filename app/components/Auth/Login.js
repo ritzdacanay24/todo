@@ -7,10 +7,10 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
 
 import { Link } from 'react-router-dom';
-import check from '../images/todo.png';
+import check from '../../images/todo.png';
 
-import AuthService from "../services/auth.service";
-import KrogerService from "../services/kroger.service";
+import AuthService from "../../services/auth.service";
+import KrogerService from "../../services/kroger.service";
 
 const required = value => {
     if (!value) {
@@ -163,7 +163,7 @@ export default class Login extends Component {
                                     </Form>
                                     <Button variant="primary" as={Link} to="/Register" className="float-right">Register</Button>
                                     <div className="form-group">
-                                        Forgot password? <Link to="/ForgotPassword">Reset It</Link>
+                                        Forgot password? <Link to="/PasswordRequest">Reset It</Link>
                                     </div>
                                 </Card.Body>
                             </Card>

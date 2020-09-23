@@ -4,9 +4,9 @@ import CheckButton from "react-validation/build/button";
 import Card from 'react-bootstrap/Card';
 import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
-import check from '../images/todo.png';
+import check from '../../images/todo.png';
 import queryString from 'query-string';
-import AuthService from "../services/auth.service";
+import AuthService from "../../services/auth.service";
 import { Link } from 'react-router-dom';
 
 const required = value => {
