@@ -28,6 +28,20 @@ class AuthService {
     });
   }
 
+  forgotPassword(email) {
+    return API.post('users/forgotPassword', {
+      email
+    });
+  }
+
+  verifyPasswordToken(token) {
+    return API.get(`users/verifyPasswordToken/${token}`);
+  }
+
+  resetPassword(params) {
+    return API.post(`users/resetPassword`, params);
+  }
+
   getCurrentUserStorage() {
     return JSON.parse(localStorage.getItem('user'));;
   }
