@@ -21,6 +21,9 @@ import NavbarHeader from "../../components/NavbarHeader";
 import Footer from "../../components/Footer";
 import Login from "../../components/login.component";
 import Register from "../../components/register.component";
+import ForgotPassword from "../../components/forgotPassword.component";
+import ResetPassword from "../../components/ResetPassword.component";
+import InviteRequests from "../../components/ToDo/InviteRequest";
 
 //main app css
 import GlobalStyle from '../../global-styles';
@@ -68,8 +71,11 @@ class App extends Component {
           <Route exact path="/ToDo/:id" render={(props) => (<ToDo currentUser={currentUser} {...props}/>)}  />
           <Route exact path="/ToDo/:id/:tab" render={(props) => (<ToDo currentUser={currentUser} {...props}/>)}  />
           <Route exact path="/Profile" render={(props) => (<Profile currentUser={currentUser} {...props}/>)}  />
+          <Route exact path="/InviteRequests" render={(props) => (<InviteRequests {...props}/>)}  />
           <Route exact path="/Features" component={Features} />
-          <Route exact path="/Login" component={Login} />
+          <Route exact path="/Login" component={Login} /> 
+          <Route exact path="/ForgotPassword" component={ForgotPassword} /> 
+          <Route exact path="/ResetPassword" component={ResetPassword} /> 
           <Route exact path="/Register" component={Register} />
           <Route component={NotFoundPage} />
         </Switch>
