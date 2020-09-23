@@ -8,6 +8,8 @@ import queryString from 'query-string'
 import RecipeService from '../../services/recipe.service';
 import ItemService from '../../services/item.service';
 
+import { NotificationManager } from 'react-notifications';
+
 export default class RecipeDetail extends Component {
 
     constructor(props) {
@@ -52,6 +54,7 @@ export default class RecipeDetail extends Component {
 
         try {
             await ItemService.addBulkItems(currentUserId, currentView._id, details.ingredients)
+            NotificationManager.success('Items added to ' + currentView.name);
         } catch (e) {
             console.log(e)
         }
@@ -61,6 +64,7 @@ export default class RecipeDetail extends Component {
         try {
             await ItemService.deleteRecipeById(this.state.recipeId);
             this.props.history.push({ pathname: `/ToDo/${this.props.match.params.id}/MyRecipes` })
+            NotificationManager.success('Recipe deleted');
         } catch (e) {
             console.log(e)
         }
