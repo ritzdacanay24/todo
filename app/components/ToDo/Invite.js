@@ -5,9 +5,11 @@ import Popover from 'react-bootstrap/Popover';
 import Image from 'react-bootstrap/Image';
 import log from '../../images/default.jpg';
 
+import ListService from '../../services/list.service';
 import UserService from '../../services/user.service';
 
 const Invite = props => {
+
     const [show, setShow] = useState(false);
     const [target, setTarget] = useState(null);
     const ref = useRef(null);
@@ -39,8 +41,15 @@ const Invite = props => {
         setTarget(event.target);
     };
 
-    const onClickGetReulsts = userId => {
-        alert(userId)
+    const invite = async user => {
+        let params = {
+            fromEmail: props.currentUser.email,
+            fromId: props.currentUser._id,
+            toEmail: user.email,
+            toId: user._id,
+            listId: props.currentView._id
+        }
+        await ListService.listInvite(params);
     }
 
     return (
@@ -68,7 +77,7 @@ const Invite = props => {
                             autoFocus
                         />
                         <br />
-                        <div className="filter-content">
+                        <div className="filter-content" style={{ overflowY: "scroll", height: "282px" }}>
                             {!searchResults.length && searchTerm &&
                                 <li className="list-group list-group-flush list-group-item pointer">
                                     User not found in the system. Please enter their email to invite them
@@ -76,14 +85,12 @@ const Invite = props => {
                             }
                             {searchResults && searchResults.map((user, index) => {
                                 return (
-                                    <li key={index} onClick={() => onClickGetReulsts(user._id)} className="list-group list-group-flush list-group-item pointer">
-                                        <Image src={log} roundedCircle style={{ width: "30px" }} /> {" "} {user.firstName}
+                                    <li key={index} className="list-group list-group-flush list-group-item pointer">
+                                        <Image src={log} roundedCircle style={{ width: "30px" }} /> {" "} {user.firstName} <br /> {user.email} <br />
+                                        <Button onClick={() => invite(user)} className="btn-sm btn-orange" block>Send Invite</Button>
                                     </li>
                                 )
                             })}
-                        </div>
-                        <div>
-                            <Button className="btn-orange" block style={{ position: "absolute", bottom: "10px", right: "15px", margin: "0px", width: "90%" }}>Send Invite</Button>
                         </div>
                     </Popover.Content>
                 </Popover>

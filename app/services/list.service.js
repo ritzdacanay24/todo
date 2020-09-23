@@ -17,6 +17,10 @@ class ListService {
   async getListByUserId(userId) {
     return await API.get(`lists/${userId}`);
   }
+
+  async listInvite(params) {
+    return await API.post(`lists/listInvite`, params);
+  }
   
 }
 
