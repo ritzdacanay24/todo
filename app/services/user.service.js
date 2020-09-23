@@ -8,6 +8,9 @@ class UserService {
   async updateUserInfo(userId, userData) {
     return await API.put(`users/${userId}`, userData);
   }
+  async deleteUserById(userId) {
+    return await API.delete(`users/${userId}`);
+  }
 }
 
 export default new UserService();

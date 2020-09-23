@@ -27,6 +27,7 @@ const NavbarHeader = ({ userInfo }) => {
                     <Nav.Link as={Link} to="/features">Features</Nav.Link>
                     <Nav.Link as={Link} to="/ToDo">ToDo</Nav.Link>
                     <Nav.Link as={Link} to="/pricing">Pricing</Nav.Link>
+                    {userInfo && userInfo.isAdmin && <Nav.Link as={Link} to="/Admin">Admin</Nav.Link>}
                 </Nav>
                 <Nav>
                     {userInfo ? (

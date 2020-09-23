@@ -24,6 +24,7 @@ import Register from "../../components/register.component";
 import ForgotPassword from "../../components/forgotPassword.component";
 import ResetPassword from "../../components/ResetPassword.component";
 import InviteRequests from "../../components/ToDo/InviteRequest";
+import Admin from "../../components/Admin";
 
 //main app css
 import GlobalStyle from '../../global-styles';
@@ -72,6 +73,7 @@ class App extends Component {
           <Route exact path="/ToDo/:id/:tab" render={(props) => (<ToDo currentUser={currentUser} {...props}/>)}  />
           <Route exact path="/Profile" render={(props) => (<Profile currentUser={currentUser} {...props}/>)}  />
           <Route exact path="/InviteRequests" render={(props) => (<InviteRequests {...props}/>)}  />
+          <Route exact path="/Admin" render={(props) => (<Admin currentUser={currentUser} {...props}/>)}  />
           <Route exact path="/Features" component={Features} />
           <Route exact path="/Login" component={Login} /> 
           <Route exact path="/ForgotPassword" component={ForgotPassword} /> 
