@@ -279,10 +279,6 @@ sticky-top-card-item {
   border-bottom: 1px solid rgba(0,0,0,-11.875) !important;
 }
 
-.react-confirm-alert-overlay {
-  z-index: 9999 !important;
-}
-
 .custom-ui {
   text-align: center;
   width: 500px;

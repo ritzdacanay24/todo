@@ -47,6 +47,10 @@ const GlobalStyle = createGlobalStyle`
   nav.navbar {
     background-color: rgba(0, 0, 0, 0.6) !important; 
   }
+
+  .react-confirm-alert-overlay {
+    z-index: 9999 !important;
+  }
 `;
 
 export default GlobalStyle;
