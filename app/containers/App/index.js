@@ -18,6 +18,7 @@ import ToDo from '../../components/ToDo';
 import Profile from "../../components/Profile/Profile";
 import Features from '../../components/Features';
 import InviteRequests from "../../components/ToDo/InviteRequest";
+import ContactUs from "../../components/ContactUs";
 
 //Admin
 import Admin from "../../components/Admin";
@@ -44,7 +45,7 @@ import 'react-confirm-alert/src/react-confirm-alert.css';
 import 'react-notifications/lib/notifications.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-
+import ProtectedRoute from '../ProtectedRoute';
 
 class App extends Component {
 
@@ -76,21 +77,26 @@ class App extends Component {
       <div className="App">
         <NavbarHeader userInfo={currentUser} />
         <Switch>
+
           <Route exact path="/" component={HomePage} />
           
           <Route exact path="/ToDo" render={(props) => (<ToDo currentUser={currentUser} {...props} />)} />
           <Route exact path="/ToDo/:id" render={(props) => (<ToDo currentUser={currentUser} {...props} />)} />
           <Route exact path="/ToDo/:id/:tab" render={(props) => (<ToDo currentUser={currentUser} {...props} />)} />
 
-          <Route exact path="/Profile" render={(props) => (<Profile currentUser={currentUser} {...props} />)} />
+          {/* Require login */}
+          <ProtectedRoute exact path='/Admin' currentUser={currentUser} component={Admin}/>
+          <ProtectedRoute exact path="/Profile" currentUser={currentUser} component={Profile} />
+          
+          {/* Public */}
+          <Route exact path="/Features" component={Features} /> 
           <Route exact path="/InviteRequests" render={(props) => (<InviteRequests {...props} />)} />
-          <Route exact path="/Features" component={Features} />
+          <Route exact path="/ContactUs" render={(props) => (<ContactUs {...props} />)} />
 
-          <Route exact path="/Admin" render={(props) => (<Admin currentUser={currentUser} {...props} />)} />
-          <Route exact path="/Login" component={Login} />
-          <Route exact path="/PasswordRequest" component={PasswordRequest} />
-          <Route exact path="/ResetPassword" component={ResetPassword} />
-          <Route exact path="/Register" component={Register} />
+          <Route exact path="/Login" render={(props) => (<Login {...props} />)} />
+          <Route exact path="/PasswordRequest" render={(props) => (<PasswordRequest {...props} />)} />
+          <Route exact path="/ResetPassword" render={(props) => (<ResetPassword {...props} />)} />
+          <Route exact path="/Register" render={(props) => (<Register {...props} />)} />
 
           <Route component={NotFoundPage} />
         </Switch>
