@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Jumbotron from 'react-bootstrap/Jumbotron';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -7,6 +7,11 @@ import AdminSideNav from './admin.sideNav';
 import AdminUsers from "./admin.users";
 
 const Admin = props => {
+
+    useEffect(() => {
+        if (props.currentUser && !props.currentUser.isAdmin) props.history.push('/');
+    }, []);
+
     return (
         <Jumbotron>
             <Container>
