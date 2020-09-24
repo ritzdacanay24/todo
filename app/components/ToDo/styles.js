@@ -430,6 +430,35 @@ div.nav-app ul.nav {
   background-color: #ff9933 !important;
 }
 
+@media (min-width: 992px){
+.modal-lg, .modal-xl {
+    max-width: 1100px !important;
+}
+}
+
+.custom-map-modal 
+  .modal-dialog {
+    width: 95%;
+    height: 90%;
+    margin: 0;
+    padding: 0;
+  }
+
+
+
+.custom-map-modal .modal-content {
+  height: auto;
+  min-height: 95%;
+  border-radius: 0;
+}
+
+@media (min-width: 576px){
+  .custom-map-modal .modal-dialog {
+    max-width: 95% !important;
+    margin: 1.75rem auto;
+    
+}
+}
 `;
 
 export default ToDoStyles;
