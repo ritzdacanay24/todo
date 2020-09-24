@@ -42,6 +42,7 @@ const vpassword = value => {
 export default class Register extends Component {
   constructor(props) {
     super(props);
+
     this.handleRegister = this.handleRegister.bind(this);
     this.onChangeForm = this.onChangeForm.bind(this);
 
@@ -103,7 +104,7 @@ export default class Register extends Component {
 
   render() {
     return (
-      <header className="register">
+      <header className="login" style={{ paddingBottom: "calc(15.7rem - 3.6rem)" }}>
         <div className="container">
           <div className="row justify-content-md-center">
             <div className="col-md-7">
@@ -121,7 +122,6 @@ export default class Register extends Component {
                   >
                     {!this.state.successful && (
                       <div>
-
                         <div className="form-group">
                           <label htmlFor="firstName">First name</label>
                           <Input
