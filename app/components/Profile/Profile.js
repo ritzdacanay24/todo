@@ -10,14 +10,12 @@ import ItemService from "../../services/item.service";
 import UserService from "../../services/user.service";
 
 const Profile = ({ currentUser }) => {
-
     const [data, setData] = useState({});
     const [userData, setUserData] = useState(currentUser);
 
     useEffect(() => {
         const fetchData = async function fetchData() {
             const result = await ItemService.getOverview(currentUser._id);
-            console.log(result)
             setData(result.data);
         }
         fetchData();
@@ -32,7 +30,6 @@ const Profile = ({ currentUser }) => {
         delete userData.__v
         let res = await UserService.updateUserInfo(currentUser._id, userData);
         location.reload();
-
     }
 
     return (
