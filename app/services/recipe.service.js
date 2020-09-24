@@ -20,4 +20,4 @@ class RecipeService {
   
 }
 
-export default new RecipeService();
+export default RecipeService;

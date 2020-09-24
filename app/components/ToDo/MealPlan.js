@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Card from 'react-bootstrap/Card';
-import SpoonacularService from '../../services/spoonacular.service';
+import RepositoryWrapper from '../../services/RepositoryWrapper';
+const repo = new RepositoryWrapper();
 
 const MealPlan = props => {
     const [meals, setMeals] = useState([])
@@ -8,11 +9,11 @@ const MealPlan = props => {
     useEffect(() => {
         async function getBulk(ids) {
             let params = { ids: ids }
-            const res = await SpoonacularService.getInformationBulk(params);
+            const res = await repo.SpoonacularService.getInformationBulk(params);
             setMeals(res.data);
         }
         const fetchData = async function fetchData() {
-            const res = await SpoonacularService.getMealPlan();
+            const res = await repo.SpoonacularService.getMealPlan();
             let idArray = []
             res.data.items.map(list => {
                 let value = JSON.parse(list.value);

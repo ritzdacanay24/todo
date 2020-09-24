@@ -5,8 +5,10 @@ import Card from 'react-bootstrap/Card';
 import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
 import check from '../../images/todo.png';
-import AuthService from "../../services/auth.service";
 import { Link } from 'react-router-dom';
+
+import RepositoryWrapper from '../../services/RepositoryWrapper';
+const repo = new RepositoryWrapper();
 
 const required = value => {
     if (!value) {
@@ -23,7 +25,7 @@ export default class PasswordRequest extends Component {
         super(props);
 
         // redirect to home if already logged in
-        if (AuthService.getCurrentUserStorage()) { 
+        if (repo.AuthService.getCurrentUserStorage()) { 
             this.props.history.push('/');
         }
         
@@ -56,7 +58,7 @@ export default class PasswordRequest extends Component {
         this.form.validateAll();
 
         if (this.checkBtn.context._errors.length === 0) {
-            AuthService.forgotPassword(this.state.email).then(
+            repo.AuthService.forgotPassword(this.state.email).then(
                 async (res) => {
 
                     try {

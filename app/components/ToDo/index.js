@@ -12,8 +12,8 @@ import MealPlan from './MealPlan';
 import Invite from './Invite';
 import ToDoStyles from './styles';
 
-import ListService from '../../services/list.service';
-import ItemService from '../../services/item.service';
+import RepositoryWrapper from '../../services/RepositoryWrapper';
+const repo = new RepositoryWrapper();
 
 import { NotificationManager } from 'react-notifications';
 
@@ -98,7 +98,7 @@ class ToDo extends Component {
 
     getListsByUserId = async () => {
         try {
-            let res = await ListService.getListByUserId(this.state.currentUser);
+            let res = await repo.ListService.getListByUserId(this.state.currentUser);
             this.setState({ lists: res.data });
         } catch (e) {
             if (e.response.data)
@@ -116,7 +116,7 @@ class ToDo extends Component {
     getItems = async id => {
         if (id == undefined || id == "MyList") return;
         try {
-            let res = await ItemService.getItemsById(id)
+            let res = await repo.ItemService.getItemsById(id)
             if (!res.data.lists) {
                 if (this.state.lists[0] === undefined) {
                     this.props.history.push({
@@ -158,7 +158,7 @@ class ToDo extends Component {
             "userId": this.state.currentUser
         }
         try {
-            let res = await ListService.createNewList(updateItems);
+            let res = await repo.ListService.createNewList(updateItems);
             console.log('res', res)
             this.setState({
                 currentView: res.data,
@@ -172,7 +172,7 @@ class ToDo extends Component {
 
     updateList = async list => {
         try {
-            await ListService.updateList(list);
+            await repo.ListService.updateList(list);
             this.setState({
                 lists: this.state.lists.map(el => (el._id === list._id ? list : el)),
                 currentView: list
@@ -185,7 +185,7 @@ class ToDo extends Component {
 
     deleteList = async listId => {
         try {
-            await ListService.deleteListById(listId);
+            await repo.ListService.deleteListById(listId);
             this.setState({
                 lists: this.state.lists.filter(x => x._id !== listId),
                 currentView: 0
@@ -206,7 +206,7 @@ class ToDo extends Component {
         item.createdBy = this.state.currentUser
 
         try {
-            let res = await ItemService.addItem(item);
+            let res = await repo.ItemService.addItem(item);
             this.socket.emit('CREATE_TASK', res.data, this.state.currentView._id);
             NotificationManager.success('Item added');
         } catch (e) {
@@ -216,7 +216,7 @@ class ToDo extends Component {
 
     updateItem = async item => {
         try {
-            await ItemService.updateItemById(item);
+            await repo.ItemService.updateItemById(item);
             this.setState({ items: this.state.items.map(el => (el._id === item._id ? item : el)) }, () => this.updateItemSocket());
             NotificationManager.success('Item updated');
         } catch (e) {
@@ -226,7 +226,7 @@ class ToDo extends Component {
 
     deleteItem = async itemId => {
         try {
-            await ItemService.deleteItemById(itemId);
+            await repo.ItemService.deleteItemById(itemId);
             this.setState({ items: this.state.items.filter(x => x._id !== itemId) }, () => this.updateItemSocket());
             NotificationManager.success('Item deleted');
         } catch (e) {
@@ -237,7 +237,7 @@ class ToDo extends Component {
     onChangeCheckUnCheckItem = async message => {
         message.completedDate = message.completedDate ? null : new Date();
         try {
-            await ItemService.updateCheckOrUncheckItem(message);
+            await repo.ItemService.updateCheckOrUncheckItem(message);
             this.setState({ items: this.state.items.map(el => (el._id === message._id ? { ...el, message } : el)) }, () => this.updateItemSocket());
         } catch (e) {
             this.displayErrorMessage()
@@ -247,7 +247,7 @@ class ToDo extends Component {
     onChangeBulkCheckUnCheckItem = async (listId, item, action) => {
         item.completedDate = action == 'Check All' ? new Date() : null;
         try {
-            await ItemService.updateBulkCheckOrUncheckItems(listId, item.completedDate);
+            await repo.ItemService.updateBulkCheckOrUncheckItems(listId, item.completedDate);
             this.setState({ items: this.state.items.map(el => (el.listId === listId ? { ...el, completedDate: item.completedDate } : el)) }, () => this.updateItemSocket());
         } catch (e) {
             this.displayErrorMessage()
@@ -256,7 +256,7 @@ class ToDo extends Component {
 
     deleteBulkItems = async listId => {
         try {
-            await ItemService.deleteBulkItemsById(listId);
+            await repo.ItemService.deleteBulkItemsById(listId);
             this.setState({ items: this.state.items.filter(x => x.listId !== listId) }, () => this.updateItemSocket());
             NotificationManager.success('Successfylly deleted bulk items');
         } catch (e) {
@@ -267,7 +267,7 @@ class ToDo extends Component {
     duplicateItem = async itemId => {
         let duplicatedItem = this.state.items.filter(x => x._id === itemId);
         try {
-            let res = await ItemService.duplicateItemOrItem(this.state.currentUser, this.state.currentView._id, duplicatedItem);
+            let res = await repo.ItemService.duplicateItemOrItem(this.state.currentUser, this.state.currentView._id, duplicatedItem);
             this.setState({ items: this.state.items.concat(res.data) }, () => this.updateItemSocket());
             NotificationManager.success('Successfylly duplicated item');
         } catch (e) {
@@ -279,7 +279,7 @@ class ToDo extends Component {
         let duplicatedItem = this.state.items.filter(x => x.aisle === aisle);
 
         try {
-            let res = await ItemService.duplicateItemOrItem(this.state.currentUser, this.state.currentView._id, duplicatedItem);
+            let res = await repo.ItemService.duplicateItemOrItem(this.state.currentUser, this.state.currentView._id, duplicatedItem);
             this.setState({ items: this.state.items.concat(res.data) }, () => this.updateItemSocket());
             NotificationManager.success('Successfylly duplicated bulk items');
         } catch (e) {
@@ -289,7 +289,7 @@ class ToDo extends Component {
 
     deleteBulkGroupItemsByAisle = async (listId, aisleName) => {
         try {
-            await ItemService.deleteBulkGroupItemsByAisle(listId, aisleName);
+            await repo.ItemService.deleteBulkGroupItemsByAisle(listId, aisleName);
             this.setState({ items: this.state.items.filter(x => x.aisle !== aisleName) }, () => this.updateItemSocket());
             NotificationManager.success('Successfylly deleted group');
         } catch (e) {
@@ -301,7 +301,7 @@ class ToDo extends Component {
         item.completedDate = action == 'Check All' ? new Date() : null;
 
         try {
-            await ItemService.updateBulkGroupItemsByAisle(listId, item.aisle, item.completedDate);
+            await repo.ItemService.updateBulkGroupItemsByAisle(listId, item.aisle, item.completedDate);
             this.setState({ items: this.state.items.map(el => (el.aisle == item.aisle ? { ...el, completedDate: item.completedDate } : el)) }, () => this.updateItemSocket());
         } catch (e) {
             this.displayErrorMessage()
@@ -310,7 +310,7 @@ class ToDo extends Component {
 
     moveItem = async (itemId, aisleName) => {
         try {
-            await ItemService.moveItem(itemId, aisleName);
+            await repo.ItemService.moveItem(itemId, aisleName);
             this.setState({ items: this.state.items.map(el => (el._id == itemId ? { ...el, aisle: aisleName } : el)) }, () => this.updateItemSocket());
             NotificationManager.success('Successfylly moved item');
         } catch (e) {

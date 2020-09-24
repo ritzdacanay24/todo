@@ -5,13 +5,13 @@ import Nav from 'react-bootstrap/Nav';
 import check from '../images/check.png';
 import { Link } from 'react-router-dom';
 
-import AuthService from "../services/auth.service";
-import KrogerService from "../services/kroger.service";
+import RepositoryWrapper from '../services/RepositoryWrapper';
+const repo = new RepositoryWrapper();
 
 const NavbarHeader = ({ userInfo }) => {
     const logOut = () => {
-        KrogerService.deleteTokens()
-        AuthService.logout();
+        repo.KrogerService.deleteTokens()
+        repo.AuthService.logout();
         window.location.href = '/Login'
     }
     return (

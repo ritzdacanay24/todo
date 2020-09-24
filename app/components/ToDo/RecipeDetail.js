@@ -5,8 +5,8 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Image from 'react-bootstrap/Image';
 import queryString from 'query-string'
 
-import RecipeService from '../../services/recipe.service';
-import ItemService from '../../services/item.service';
+import RepositoryWrapper from '../../services/RepositoryWrapper';
+const repo = new RepositoryWrapper();
 
 import { NotificationManager } from 'react-notifications';
 
@@ -29,7 +29,7 @@ export default class RecipeDetail extends Component {
 
     getRecipeById = async recipeId => {
         try {
-            let res = await RecipeService.getRecipeById(recipeId);
+            let res = await repo.RecipeService.getRecipeById(recipeId);
             this.setState({ details: res.data })
         } catch (e) {
             console.log(e)
@@ -53,7 +53,7 @@ export default class RecipeDetail extends Component {
         });
 
         try {
-            await ItemService.addBulkItems(currentUserId, currentView._id, details.ingredients)
+            await repo.ItemService.addBulkItems(currentUserId, currentView._id, details.ingredients)
             NotificationManager.success('Items added to ' + currentView.name);
         } catch (e) {
             console.log(e)
@@ -62,7 +62,7 @@ export default class RecipeDetail extends Component {
 
     onClickDeleteRecipe = async () => {
         try {
-            await ItemService.deleteRecipeById(this.state.recipeId);
+            await repo.ItemService.deleteRecipeById(this.state.recipeId);
             this.props.history.push({ pathname: `/ToDo/${this.props.match.params.id}/MyRecipes` })
             NotificationManager.success('Recipe deleted');
         } catch (e) {

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import Jumbotron from 'react-bootstrap/Jumbotron';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
-import supportService from '../../services/support.service';
+import RepositoryWrapper from '../../services/RepositoryWrapper';
+const repo = new RepositoryWrapper();
 
 import { NotificationManager } from 'react-notifications';
 
@@ -19,7 +19,7 @@ const ContactUs = props => {
 
     const save = async (e) => {
         e.preventDefault();
-        await supportService.createSupportTicket(userData);
+        await repo.SupportService.createSupportTicket(userData);
         NotificationManager.success('Your ticket is submitted. Thank you!!');
     }
 

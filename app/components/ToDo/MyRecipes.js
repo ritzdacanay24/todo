@@ -3,7 +3,8 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import { Link } from 'react-router-dom';
 
-import RecipeService from '../../services/recipe.service';
+import RepositoryWrapper from '../../services/RepositoryWrapper';
+const repo = new RepositoryWrapper();
 
 class MyRecipes extends Component {
 
@@ -28,7 +29,7 @@ class MyRecipes extends Component {
 
     getRecipes = async () => {
         try {
-            let res = await RecipeService.getRecipeByUserId(this.state.currentUserId);
+            let res = await repo.RecipeService.getRecipeByUserId(this.state.currentUserId);
             if (this.mounted) this.setState({ details: res.data });
         } catch (e) {
             console.log(e)

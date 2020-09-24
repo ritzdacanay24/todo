@@ -9,8 +9,8 @@ import FormControl from 'react-bootstrap/FormControl';
 import { Link } from 'react-router-dom';
 import check from '../../images/todo.png';
 
-import AuthService from "../../services/auth.service";
-import KrogerService from "../../services/kroger.service";
+import RepositoryWrapper from '../../services/RepositoryWrapper';
+const repo = new RepositoryWrapper();
 
 const required = value => {
     if (!value) {
@@ -27,7 +27,7 @@ export default class Login extends Component {
         super(props);
 
         // redirect to home if already logged in
-        if (AuthService.getCurrentUserStorage()) { 
+        if (repo.AuthService.getCurrentUserStorage()) { 
             this.props.history.push('/');
         }
 
@@ -66,10 +66,10 @@ export default class Login extends Component {
         this.form.validateAll();
 
         if (this.checkBtn.context._errors.length === 0) {
-            AuthService.login(this.state.email, this.state.password).then(
+            repo.AuthService.login(this.state.email, this.state.password).then(
                 async (res) => {
                     try {
-                        await KrogerService.redirectToGroceryAppAfterLoginByClientCredentials();
+                        await repo.KrogerService.redirectToGroceryAppAfterLoginByClientCredentials();
                         window.location.href = '/ToDo';
                     } catch (e) {
                         this.setState({

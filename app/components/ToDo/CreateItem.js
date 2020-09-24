@@ -3,9 +3,12 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card';
+import CardGroup from 'react-bootstrap/CardGroup';
 import { confirmAlert } from 'react-confirm-alert';
 import { useDebounce } from '../../utils/debounce';
-import KrogerService from "../../services/kroger.service";
+import RepositoryWrapper from '../../services/RepositoryWrapper';
+const repo = new RepositoryWrapper();
 
 const CreateItem = ({ action, list, addItem, updateItem, deleteItem, nameOfButton, typeOfButton, calculateTotalCost }) => {
 
@@ -29,7 +32,7 @@ const CreateItem = ({ action, list, addItem, updateItem, deleteItem, nameOfButto
     const [results, setResults] = useState([]);
     const [pagination, setPagination] = useState(0);
     const [paginationStart, setPaginationStart] = useState(0);
-    const [maxCost, setMaxCostThreshold] = useState(500);
+    const [maxCost, setMaxCostThreshold] = useState(2000);
 
     const timeToCallAPIEndPoint = 3000
     const [isSearching, setIsSearching] = useState(false);
@@ -39,9 +42,9 @@ const CreateItem = ({ action, list, addItem, updateItem, deleteItem, nameOfButto
     //autofocus when model opens
     const inputRef = useRef(null);
     if (show) {
-        // setTimeout(() => {
-        //     inputRef.current.focus();
-        // }, 1);
+        setTimeout(() => {
+            inputRef.current.focus();
+        }, 1);
     }
 
     useEffect(
@@ -50,6 +53,15 @@ const CreateItem = ({ action, list, addItem, updateItem, deleteItem, nameOfButto
             let isSubscribed = true
             if (debouncedSearchTerm && searchTerm && isSubscribed) {
 
+                const isFouund = localStorage.getItem('groceryRecentSearch');
+                if (isFouund) {
+                    let s = JSON.parse(localStorage.getItem('groceryRecentSearch'))
+                    s.push(searchTerm)
+                    localStorage.setItem('groceryRecentSearch', JSON.stringify(s));
+                } else {
+                    localStorage.setItem('groceryRecentSearch', JSON.stringify([searchTerm]));
+                }
+
                 setIsSearching(true);
 
                 //TODO: add input to capture the zipcode and get the id from the endpoint
@@ -57,13 +69,13 @@ const CreateItem = ({ action, list, addItem, updateItem, deleteItem, nameOfButto
 
                 const fetchData = async function fetchData() {
 
-                    await KrogerService.isAccessTokenExpired();
+                    await repo.KrogerService.isAccessTokenExpired();
 
                     try {
-                        let res = await KrogerService.searchByItem(debouncedSearchTerm, locationId, paginationStart)
+                        let res = await repo.KrogerService.searchByItem(debouncedSearchTerm, locationId, paginationStart)
 
                         let results = res.data.data;
-
+                        console.log(results)
                         // looping through data to place them in the parent 
                         // this is because this api end point has many arrays. 
                         for (let i = 0; i < results.length; i++) {
@@ -135,8 +147,31 @@ const CreateItem = ({ action, list, addItem, updateItem, deleteItem, nameOfButto
         setShow(true)
     };
 
-    const onClickSaveItems = ev => {
-        ev.preventDefault();
+    const onClickStageItems = (item) => {
+
+        let acceptedValues = {
+            "unitOfMeasure": item.unitOfMeasure
+            , "price": item.price
+            , "name": item.unitOfMeasure + ' ' + item.description
+            , "original": item.description
+            , "image": item.image
+            , "notes": ""
+            , "aisle": item.aisle
+            , "amount": item.amount
+            , "qty": values.qty
+        }
+
+        for (const property in acceptedValues) {
+            setValues(values => ({
+                ...values
+                , [property]: acceptedValues[property]
+            }));
+        }
+        onClickSaveItems(acceptedValues)
+    }
+
+    const onClickSaveItems = (item) => {
+
         if (calculateTotalCost() + values.price > maxCost) {
             confirmAlert({
                 title: 'Sorry, you have reached the maximum amount.',
@@ -150,7 +185,7 @@ const CreateItem = ({ action, list, addItem, updateItem, deleteItem, nameOfButto
             });
         } else {
 
-            addItem(values, ev);
+            addItem(item);
             setShow(!isClose)
         }
 
@@ -177,26 +212,7 @@ const CreateItem = ({ action, list, addItem, updateItem, deleteItem, nameOfButto
         setShow(false)
     }
 
-    const onClickStageItems = (item) => {
 
-        let acceptedValues = {
-            "unitOfMeasure": item.unitOfMeasure
-            , "price": item.price
-            , "name": item.description
-            , "image": item.image
-            , "notes": ""
-            , "aisle": item.aisle
-            , "amount": item.amount
-            , "qty": values.qty
-        }
-
-        for (const property in acceptedValues) {
-            setValues(values => ({
-                ...values
-                , [property]: acceptedValues[property]
-            }));
-        }
-    }
 
     return (
         <>
@@ -204,67 +220,47 @@ const CreateItem = ({ action, list, addItem, updateItem, deleteItem, nameOfButto
             {!typeOfButton && <Button className="btn-orange float-right" onClick={handleShow}> <i className={icon} aria-hidden="true"></i> {nameOfButton} </Button>}
             {typeOfButton == 2 && <span onClick={handleShow}> Edit Item </span>}
 
-            <Modal size="lg" show={show} onHide={handleClose} centered>
+            <Modal size="xlg" show={show} onHide={handleClose} centered className="modal-container custom-map-modal">
                 <Modal.Header closeButton>
-                    <Modal.Title><i className={icon} aria-hidden="true"></i> {action} Item </Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
                     <Form autoComplete="off">
-                        <Form.Group>
-                            <Form.Row>
-                                <Form.Label column lg={2}>
-                                    Search Item
-                                </Form.Label>
-                                <Col>
-                                    <Form.Control ref={inputRef} name="searchTerm" type="text" placeholder="Search item" defaultValue={values.searchTerm || ""} onChange={e => setSearchTerm(e.target.value)} />
-                                    <small>After typing, a list of matched items will be displayed below.</small>
-                                </Col>
-                            </Form.Row>
-                        </Form.Group>
-                        {searchTerm &&
-                            <Form.Group>
-                                <Form.Row>
-                                    <Col>
+                        <Form.Control ref={inputRef} name="searchTerm" type="text" placeholder="Search item" defaultValue={values.searchTerm || ""} onChange={e => setSearchTerm(e.target.value)} />
 
-                                        <div style={{ maxHeight: "400px", overflow: "auto", fontSize: "14px" }}>
-                                            {isSearching && <div>Searching ...</div>}
+                    </Form>
+                </Modal.Header>
+                <Modal.Body style={{ 'maxHeight': 'calc(100vh - 210px)', 'overflowY': 'auto' }}>
+                    {searchTerm &&
+                        <div className="row">
+                            <CardGroup>
 
-                                            {results.length > 0 &&
-                                                results.map((item, index) => (
-                                                    <div className="media border p-3" key={index}>
-                                                        <img src={item.image} alt="John Doe" className="align-self-center mr-3" style={{ width: "150px", maxHeight: "200px" }} />
+                                {isSearching && <div>Searching ...</div>}
 
-                                                        <div className="media-body">
-                                                            <h6>Description: <strong>{item.description}</strong></h6>
-                                                            <p>Brand {item.brand}</p>
-                                                            <p>Price: ( {item.price} ) Promo: {item.promo}</p>
-                                                            <p>In Store:  {" "}
-                                                                {item.fulfillment.inStore ?
-                                                                    <span className="badge badge-pill badge-success">YES</span> :
-                                                                    <span className="badge badge-pill badge-danger">NO</span>
-                                                                }
-                                                            </p>
-                                                            <Button className="btn-orange btn-sm" onClick={() => onClickStageItems(item)}><i className="fa fa-plus"></i> </Button> {" "}
-
-                                                        </div>
-                                                    </div>
-                                                ))}
+                                {results.length > 0 &&
+                                    results.map((item, index) => (
+                                        <div className="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                                            <Card border="warning" style={{ fontSize: "12px", maxHeight: "400px", minHeight: "400px", marginBottom: "10px" }} className="shadow">
+                                                <span style={{ padding: "5px", margin: "0 auto" }}>
+                                                    <Card.Img variant="top" src={item.image} style={{ width: "120px", height: "140px", objectFit: "scale-down" }} /></span>
+                                                <Card.Body style={{ lineHeight: "2px" }} className="d-flex flex-column">
+                                                    <h6><strong>{item.description}</strong></h6>
+                                                    <p>Price: ( {item.price} ) Promo: {item.promo}</p>
+                                                    <p>In Store:  {" "}
+                                                        {item.fulfillment.inStore ?
+                                                            <span className="badge badge-pill badge-success">YES</span> :
+                                                            <span className="badge badge-pill badge-danger">NO</span>
+                                                        }
+                                                    </p>
+                                                    <button className="btn-orange mt-auto btn btn-block" onClick={(ev) => onClickStageItems(item)}>Add</button>
+                                                </Card.Body>
+                                            </Card>
                                         </div>
-                                    </Col>
-                                </Form.Row>
-                            </Form.Group>
-                        }
+                                    ))}
+                            </CardGroup>
+                        </div>
+                    }
 
-                        <hr />
 
-                        <span onClick={() => setPaginationStart(paginationStart - 50)}>Left {pagination.start} </span> {" "}
-                        <span onClick={() => setPaginationStart(paginationStart + 50)}>Right {pagination.start + 50}</span> {" "}
 
-                        total: {pagination.total}
-
-                        <hr />
-
-                        <Form.Group>
+                    {/* <Form.Group>
                             <Form.Row>
                                 <Form.Label column lg={2}>
                                     Item Name
@@ -343,10 +339,15 @@ const CreateItem = ({ action, list, addItem, updateItem, deleteItem, nameOfButto
                                     <Form.Control name="notes" type="text" placeholder="Notes" value={values.notes || ""} onChange={ev => handleOnChange(ev)} />
                                 </Col>
                             </Form.Row>
-                        </Form.Group>
-                    </Form>
+                        </Form.Group> */}
                 </Modal.Body>
                 <Modal.Footer>
+
+                    <span onClick={() => setPaginationStart(paginationStart - 50)}>Left {pagination.start} </span> {" "}
+                    <span onClick={() => setPaginationStart(paginationStart + 50)}>Right {pagination.start + 50}</span> {" "}
+
+                        total: {pagination.total}
+
                     <Form.Group >
                         <Col sm={{ span: 0, offset: 0 }}>
                             <Form.Check label="Close on submit" name="closeOnClick" onChange={ev => handleOnChangeOnClose(ev)} />

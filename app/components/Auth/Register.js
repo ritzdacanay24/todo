@@ -7,7 +7,8 @@ import { Link } from 'react-router-dom';
 import Card from 'react-bootstrap/Card';
 import check from '../../images/todo.png';
 
-import AuthService from "../../services/auth.service";
+import RepositoryWrapper from '../../services/RepositoryWrapper';
+const repo = new RepositoryWrapper();
 
 const required = value => {
   if (!value) {
@@ -73,7 +74,7 @@ export default class Register extends Component {
     this.form.validateAll();
 
     if (this.checkBtn.context._errors.length === 0) {
-      AuthService.register(
+      repo.AuthService.register(
         this.state.firstName,
         this.state.lastName,
         this.state.email,

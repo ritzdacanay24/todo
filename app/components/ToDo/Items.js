@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Table from 'react-bootstrap/Table';
 import Image from 'react-bootstrap/Image';
 import Dropdown from 'react-bootstrap/Dropdown';
@@ -30,10 +30,10 @@ const ToDoList = props => {
         moveItem
     } = props;
 
-    const [searchTerm, setSearchTerm] = React.useState("");
-    const [searchResults, setSearchResults] = React.useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [searchResults, setSearchResults] = useState([]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if(setSearchTerm){
             const listResults = items.filter(item =>
                 item.original.toLowerCase().includes(searchTerm.toLowerCase())

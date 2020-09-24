@@ -130,4 +130,4 @@ class KrogerService {
 
 }
 
-export default new KrogerService();
+export default KrogerService;

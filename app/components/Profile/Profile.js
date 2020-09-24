@@ -2,20 +2,19 @@ import React, { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
-
 import './profile.css';
-
 import food from '../../images/food.jpg';
-import ItemService from "../../services/item.service";
-import UserService from "../../services/user.service";
+
+import  RepositoryWrapper from '../../services/RepositoryWrapper';
+const repo = new RepositoryWrapper();
 
 const Profile = ({ currentUser }) => {
     const [data, setData] = useState({});
     const [userData, setUserData] = useState(currentUser);
-
+    
     useEffect(() => {
         const fetchData = async function fetchData() {
-            const result = await ItemService.getOverview(currentUser._id);
+            const result = await repo.ItemService.getOverview(currentUser._id);
             setData(result.data);
         }
         fetchData();
@@ -28,7 +27,7 @@ const Profile = ({ currentUser }) => {
     const saveUserInfo = async () => {
         delete userData._id
         delete userData.__v
-        let res = await UserService.updateUserInfo(currentUser._id, userData);
+        let res = await repo.UserService.updateUserInfo(currentUser._id, userData);
         location.reload();
     }
 

@@ -5,7 +5,8 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { confirmAlert } from 'react-confirm-alert';
-import UserService from "../../services/user.service";
+import RepositoryWrapper from '../../services/RepositoryWrapper';
+const repo = new RepositoryWrapper();
 
 const AdminEditUsers = ({ userEdit, fetchData }) => {
 
@@ -28,7 +29,7 @@ const AdminEditUsers = ({ userEdit, fetchData }) => {
 
     const onClickSubmit = async (e) => {
         e.preventDefault();
-        await UserService.updateUserInfo(userData._id, dataToBeSaved);
+        await repo.UserService.updateUserInfo(userData._id, dataToBeSaved);
         fetchData();
     }
 
@@ -42,7 +43,7 @@ const AdminEditUsers = ({ userEdit, fetchData }) => {
                 {
                     label: 'Yes',
                     onClick: async () => {
-                        await UserService.deleteUserById(userData._id);
+                        await repo.UserService.deleteUserById(userData._id);
                         fetchData();
                         setShow(false);
                     }

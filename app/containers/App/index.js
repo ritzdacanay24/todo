@@ -33,8 +33,9 @@ import Register from "../../components/Auth/Register";
 import PasswordRequest from "../../components/Auth/PasswordRequest";
 import ResetPassword from "../../components/Auth/ResetPassword";
 
-//Auth service
-import AuthService from "../../services/auth.service";
+//service
+import RepositoryWrapper from '../../services/RepositoryWrapper';
+const repo = new RepositoryWrapper();
 
 //main app css
 import GlobalStyle from '../../global-styles';
@@ -61,7 +62,7 @@ class App extends Component {
   }
 
   async componentDidMount() {
-    const user = await AuthService.getCurrentUser();
+    const user = await repo.AuthService.getCurrentUser();
     if (user) {
       this.setState({
         currentUser: user

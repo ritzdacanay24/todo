@@ -5,8 +5,9 @@ import Popover from 'react-bootstrap/Popover';
 import Image from 'react-bootstrap/Image';
 import log from '../../images/default.jpg';
 
-import ListService from '../../services/list.service';
-import UserService from '../../services/user.service';
+import RepositoryWrapper from '../../services/RepositoryWrapper';
+const repo = new RepositoryWrapper();
+
 import { NotificationManager } from 'react-notifications';
 
 const Invite = props => {
@@ -20,7 +21,7 @@ const Invite = props => {
 
     useEffect(() => {
         const fetchData = async function fetchData() {
-            const result = await UserService.getAll();
+            const result = await repo.UserService.getAll();
             setData(result.data);
         }
         fetchData();
@@ -50,7 +51,7 @@ const Invite = props => {
             toId: user._id,
             listId: props.currentView._id
         }
-        let res = await ListService.listInvite(params);
+        let res = await repo.ListService.listInvite(params);
         NotificationManager.success('Invite sent');
     }
 

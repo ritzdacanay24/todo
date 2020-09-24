@@ -10,8 +10,8 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 
-import SpoonacularService from '../../services/spoonacular.service';
-import RecipeService from '../../services/recipe.service';
+import RepositoryWrapper from '../../services/RepositoryWrapper';
+const repo = new RepositoryWrapper();
 
 import { NotificationManager } from 'react-notifications';
 
@@ -51,7 +51,7 @@ class SearchRecipes extends Component {
           return
         }
         try {
-          const res = await SpoonacularService.extractRecipeFromUrl(this.state.recipe);
+          const res = await repo.SpoonacularService.extractRecipeFromUrl(this.state.recipe);
           console.log(res)
           this.setState({ details: res.data, recipeList: [] });
         } catch (e) {
@@ -60,7 +60,7 @@ class SearchRecipes extends Component {
         break;
       case 'Search by recipe name':
         try {
-          const res = await SpoonacularService.searchByRecipeName(this.state.recipe, this.state.startFrom, this.state.limit);
+          const res = await repo.SpoonacularService.searchByRecipeName(this.state.recipe, this.state.startFrom, this.state.limit);
           if (!res.data.results.length) {
             alert('No recipe found with that name')
             return
@@ -75,7 +75,7 @@ class SearchRecipes extends Component {
 
   viewRecipeDetailsById = async recipeId => {
     try {
-      const res = await SpoonacularService.getRecipeInfoById(recipeId);
+      const res = await repo.SpoonacularService.getRecipeInfoById(recipeId);
       this.setState({ details: res.data });
     } catch (e) {
       console.log(e)
@@ -112,7 +112,7 @@ class SearchRecipes extends Component {
 
     try {
 
-      await RecipeService.addRecipeAction(params);
+      await repo.RecipeService.addRecipeAction(params);
       NotificationManager.success('Receipe saved');
     } catch (e) {
       console.log(e)

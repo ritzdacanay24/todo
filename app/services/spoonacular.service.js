@@ -24,4 +24,4 @@ class SpoonacularService {
 
 }
 
-export default new SpoonacularService();
+export default SpoonacularService;

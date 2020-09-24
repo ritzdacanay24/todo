@@ -6,8 +6,9 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
 import check from '../../images/todo.png';
 import queryString from 'query-string';
-import AuthService from "../../services/auth.service";
 import { Link } from 'react-router-dom';
+import RepositoryWrapper from '../../services/RepositoryWrapper';
+const repo = new RepositoryWrapper();
 
 const required = value => {
     if (!value) {
@@ -24,7 +25,7 @@ export default class ForgotPassword extends Component {
         super(props);
 
         // redirect to home if already logged in
-        if (AuthService.getCurrentUserStorage()) { 
+        if (repo.AuthService.getCurrentUserStorage()) { 
             this.props.history.push('/');
         }
         
@@ -50,7 +51,7 @@ export default class ForgotPassword extends Component {
 
     verifyPasswordToken = async () => {
         try {
-            let res = await AuthService.verifyPasswordToken(this.params.token)
+            let res = await repo.AuthService.verifyPasswordToken(this.params.token)
             this.setState({
                 isTokenValid: res.data.message
             });
@@ -83,7 +84,7 @@ export default class ForgotPassword extends Component {
                 password: this.state.password,
                 token: this.params.token
             }
-            AuthService.resetPassword(params).then(
+            repo.AuthService.resetPassword(params).then(
                 async (res) => {
                     try {
                         this.setState({

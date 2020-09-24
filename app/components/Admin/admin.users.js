@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import Jumbotron from 'react-bootstrap/Jumbotron';
 import Table from 'react-bootstrap/Table';
 import AdminEditUsers from './admin.editUsers';
-import UserService from "../../services/user.service";
+import RepositoryWrapper from '../../services/RepositoryWrapper';
+const repo = new RepositoryWrapper();
 
 const AdminUsers = props => {
 
     const [data, setData] = useState([]);
 
     const fetchData = async function fetchData() {
-        const result = await UserService.getAll();
+        const result = await repo.UserService.getAll();
         setData(result.data);
     }
 
@@ -27,7 +27,7 @@ const AdminUsers = props => {
                     <td>{user.avitar}</td>
                     <td>{user.isAdmin ? 'Yes' : ''}</td>
                     <td>{user.state}</td>
-                    <td><AdminEditUsers userEdit={user} fetchData={fetchData}/></td>
+                    <td><AdminEditUsers userEdit={user} fetchData={fetchData} /></td>
                 </tr>
             )
         })
@@ -36,7 +36,7 @@ const AdminUsers = props => {
     return (
         <>
             <h1>Memebers</h1>
-            <Table striped bordered hover responsive style={{whiteSpace:"nowrap"}}>
+            <Table striped bordered hover responsive style={{ whiteSpace: "nowrap" }}>
                 <thead>
                     <tr>
                         <th>#</th>
