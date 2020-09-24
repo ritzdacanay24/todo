@@ -16,7 +16,7 @@ const NavbarHeader = ({ userInfo }) => {
     }
     return (
         <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark" fixed="top" className="todo-header-logo">
-            <Navbar.Brand href="#home">
+            <Navbar.Brand  as={Link} to="/">
                 <span className="position-relative">GROCERY TOD<img src={check} /></span>
             </Navbar.Brand>
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
