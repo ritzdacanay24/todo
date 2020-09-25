@@ -265,7 +265,7 @@ const ToDoList = props => {
                 </td>
                 <td className={`${item.completedDate ? "line-through" : ""}`} >
                     <span>
-                        {item.original}<br />
+                        {item.name}<br />
                         <small className="small-smaller">{item.recipeName}</small>
                     </span>
                 </td>
