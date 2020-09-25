@@ -128,6 +128,21 @@ class KrogerService {
         });
     }
 
+    //search api by item name, the users location, and starting index from database.
+    async searchLocationByZipCode(zipCode) {
+        let tokens = await this.getAccessAndRefreshToken();
+
+        return await API({
+            method: 'get',
+            url: `/kroger/locations/${zipCode}/zipCode/location`,
+            data: {},
+            headers: {
+                Authorization: 'Bearer ' + tokens._accToken,
+                refToken: tokens._refToken
+            }
+        });
+    }
+
 }
 
 export default KrogerService;
