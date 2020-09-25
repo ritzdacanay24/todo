@@ -4,7 +4,8 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
-import CardGroup from 'react-bootstrap/CardGroup';
+import ZipCode from './ZipCode';
+import InputGroup from 'react-bootstrap/InputGroup';
 import { confirmAlert } from 'react-confirm-alert';
 import { useDebounce } from '../../utils/debounce';
 import RepositoryWrapper from '../../services/RepositoryWrapper';
@@ -47,86 +48,66 @@ const CreateItem = ({ action, list, addItem, updateItem, deleteItem, nameOfButto
         }, 1);
     }
 
-    useEffect(
+    const fetchData = async function fetchData(e, start = 0) {
+        e.preventDefault();
+        if(!searchTerm) return;
 
-        () => {
-            let isSubscribed = true
-            if (debouncedSearchTerm && searchTerm && isSubscribed) {
 
-                const isFouund = localStorage.getItem('groceryRecentSearch');
-                if (isFouund) {
-                    let s = JSON.parse(localStorage.getItem('groceryRecentSearch'))
-                    s.push(searchTerm)
-                    localStorage.setItem('groceryRecentSearch', JSON.stringify(s));
-                } else {
-                    localStorage.setItem('groceryRecentSearch', JSON.stringify([searchTerm]));
-                }
+        let locationInfo = JSON.parse(localStorage.getItem("GroceryToDo"));
 
-                setIsSearching(true);
+        let locationId = locationInfo ? locationInfo.locationId : '70600358'
+        setIsSearching(true);
 
-                //TODO: add input to capture the zipcode and get the id from the endpoint
-                let locationId = '70600358'
+        await repo.KrogerService.isAccessTokenExpired();
 
-                const fetchData = async function fetchData() {
+        try {
 
-                    await repo.KrogerService.isAccessTokenExpired();
+            let res = await repo.KrogerService.searchByItem(searchTerm, locationId, start)
+            setIsSearching(false);
 
-                    try {
-                        let res = await repo.KrogerService.searchByItem(debouncedSearchTerm, locationId, paginationStart)
+            let results = res.data.data;
 
-                        let results = res.data.data;
-                        console.log(results)
-                        // looping through data to place them in the parent 
-                        // this is because this api end point has many arrays. 
-                        for (let i = 0; i < results.length; i++) {
-                            //set image to paremt
-                            results[i].image = "";
-                            results[i].price = 0;
-                            results[i].promo = 0;
-                            results[i].unitOfMeasure = "";
-                            results[i].aisle = results[i].categories.toString();
-                            results[i].fulfillment = {};
+            // looping through data to place them in the parent 
+            // this is because this api end point has many arrays. 
+            for (let i = 0; i < results.length; i++) {
+                //set image to paremt
+                results[i].image = "";
+                results[i].price = 0;
+                results[i].promo = 0;
+                results[i].unitOfMeasure = "";
+                results[i].aisle = results[i].categories.toString();
+                results[i].fulfillment = {};
 
-                            //loop through images to get a specific image
-                            for (let ii = 0; ii < results[i].images.length; ii++) {
-                                if (results[i].images[ii].featured) {
-                                    for (let iii = 0; iii < results[i].images[ii].sizes.length; iii++) {
-                                        if (results[i].images[ii].sizes[iii].size == 'large') {
-                                            results[i].image = results[i].images[ii].sizes[iii].url
-                                        }
-                                    }
-                                }
-                            }
-
-                            //get price
-                            for (let ii = 0; ii < results[i].items.length; ii++) {
-                                results[i].price = results[i].items[ii].price ? results[i].items[ii].price.regular : 0
-                                results[i].promo = results[i].items[ii].price ? results[i].items[ii].price.promo : 0
-                                results[i].unitOfMeasure = results[i].items[ii].size
-                                results[i].fulfillment = results[i].items[ii].fulfillment
+                //loop through images to get a specific image
+                for (let ii = 0; ii < results[i].images.length; ii++) {
+                    if (results[i].images[ii].featured) {
+                        for (let iii = 0; iii < results[i].images[ii].sizes.length; iii++) {
+                            if (results[i].images[ii].sizes[iii].size == 'large') {
+                                results[i].image = results[i].images[ii].sizes[iii].url
                             }
                         }
-
-                        setPagination(res.data.meta.pagination);
-                        setIsSearching(false);
-                        setResults(results);
-
-                    } catch (e) {
-                        console.log(e)
                     }
                 }
-                fetchData();
 
-
-            } else {
-                setResults([]);
+                //get price
+                for (let ii = 0; ii < results[i].items.length; ii++) {
+                    results[i].price = results[i].items[ii].price ? results[i].items[ii].price.regular : 0
+                    results[i].promo = results[i].items[ii].price ? results[i].items[ii].price.promo : 0
+                    results[i].unitOfMeasure = results[i].items[ii].size
+                    results[i].fulfillment = results[i].items[ii].fulfillment
+                }
             }
 
-            return () => isSubscribed = false
+            setResults(results);
+            
+            if (results.length) setPagination(res.data.meta.pagination);
 
-        },
-        [debouncedSearchTerm, paginationStart]
-    );
+        } catch (e) {
+            setIsSearching(false);
+            console.log(e)
+        }
+    }
+
 
     const reset = () => {
         setPaginationStart(0)
@@ -158,7 +139,7 @@ const CreateItem = ({ action, list, addItem, updateItem, deleteItem, nameOfButto
             , "notes": ""
             , "aisle": item.aisle
             , "amount": item.amount
-            , "qty": values.qty
+            , "qty": values.qty ? values.qty : 1
         }
 
         for (const property in acceptedValues) {
@@ -212,7 +193,29 @@ const CreateItem = ({ action, list, addItem, updateItem, deleteItem, nameOfButto
         setShow(false)
     }
 
+    const onClickSetPaginationStart = (e, type) => {
+        if (type == 'back') {
+            let start = paginationStart - 50;
+            if (pagination.start == 0) {
+                return
+            } else {
+                setPaginationStart(start);
+                fetchData(e, start)
+            }
+        } else {
+            
+            let start = paginationStart + 50;
+            if (pagination.start == pagination.total) {
+                return
+            } else if((start) >= pagination.total){
+                return
+            }else{
+                setPaginationStart(start);
+                fetchData(e, start)
+            }
+        }
 
+    }
 
     return (
         <>
@@ -220,144 +223,144 @@ const CreateItem = ({ action, list, addItem, updateItem, deleteItem, nameOfButto
             {!typeOfButton && <Button className="btn-orange float-right" onClick={handleShow}> <i className={icon} aria-hidden="true"></i> {nameOfButton} </Button>}
             {typeOfButton == 2 && <span onClick={handleShow}> Edit Item </span>}
 
-            <Modal size="xlg" show={show} onHide={handleClose} centered className="modal-container custom-map-modal">
+            <Modal size={typeOfButton == 2 ? 'lg' : 'xlg'} show={show} onHide={handleClose} centered className={typeOfButton == 2 ? '' : results.length > 0 ? "modal-container custom-map-modal" : ""}>
                 <Modal.Header closeButton>
-                    <Form autoComplete="off">
-                        <Form.Control ref={inputRef} name="searchTerm" type="text" placeholder="Search item" defaultValue={values.searchTerm || ""} onChange={e => setSearchTerm(e.target.value)} />
-
-                    </Form>
+                    <Form autoComplete="off" onSubmit={fetchData}>
+                        <InputGroup>
+                            <InputGroup.Prepend>
+                                <InputGroup.Text id="basic-addon1" className="btn-orange pointer" onClick={fetchData}> <i className="fa fa-search" aria-hidden="true"></i></InputGroup.Text>
+                            </InputGroup.Prepend>
+                            <Form.Control ref={typeOfButton == 2 ? null : inputRef} name="searchTerm" type="search" placeholder="Search item" onChange={e => setSearchTerm(e.target.value)} />
+                        </InputGroup>
+                    </Form> &nbsp;
+                    <ZipCode />
                 </Modal.Header>
                 <Modal.Body style={{ 'maxHeight': 'calc(100vh - 210px)', 'overflowY': 'auto' }}>
+                    {isSearching && <div> Searching ... </div>}
                     {searchTerm &&
                         <div className="row">
-                            <CardGroup>
-
-                                {isSearching && <div>Searching ...</div>}
-
-                                {results.length > 0 &&
-                                    results.map((item, index) => (
-                                        <div className="col-xl-2 col-lg-3 col-md-4 col-sm-6">
-                                            <Card border="warning" style={{ fontSize: "12px", maxHeight: "400px", minHeight: "400px", marginBottom: "10px" }} className="shadow">
-                                                <span style={{ padding: "5px", margin: "0 auto" }}>
-                                                    <Card.Img variant="top" src={item.image} style={{ width: "120px", height: "140px", objectFit: "scale-down" }} /></span>
-                                                <Card.Body style={{ lineHeight: "2px" }} className="d-flex flex-column">
-                                                    <h6><strong>{item.description}</strong></h6>
-                                                    <p>Price: ( {item.price} ) Promo: {item.promo}</p>
-                                                    <p>In Store:  {" "}
-                                                        {item.fulfillment.inStore ?
-                                                            <span className="badge badge-pill badge-success">YES</span> :
-                                                            <span className="badge badge-pill badge-danger">NO</span>
-                                                        }
-                                                    </p>
-                                                    <button className="btn-orange mt-auto btn btn-block" onClick={(ev) => onClickStageItems(item)}>Add</button>
-                                                </Card.Body>
-                                            </Card>
-                                        </div>
-                                    ))}
-                            </CardGroup>
+                            {results.length > 0 &&
+                                results.map((item, index) => (
+                                    <div key={index} className={typeOfButton == 2 ? "col-lg-4" : "col-xl-2 col-lg-3 col-md-4 col-sm-6"}>
+                                        <Card border="warning" style={{ fontSize: "12px", maxHeight: "400px", minHeight: "400px", marginBottom: "10px" }} className="shadow">
+                                            <span style={{ padding: "5px", margin: "0 auto" }}>
+                                                <Card.Img variant="top" src={item.image} style={{ width: "120px", height: "140px", objectFit: "scale-down" }} /></span>
+                                            <Card.Body style={{ lineHeight: "2px" }} className="d-flex flex-column">
+                                                <h6><strong>{item.description}</strong></h6>
+                                                <p>Price: ( {item.price} ) Promo: {item.promo}</p>
+                                                <p>In Store:  {" "}
+                                                    {item.fulfillment.inStore ?
+                                                        <span className="badge badge-pill badge-success">YES</span> :
+                                                        <span className="badge badge-pill badge-danger">NO</span>
+                                                    }
+                                                </p>
+                                                <button className="btn-orange mt-auto btn btn-block" onClick={(ev) => onClickStageItems(item)}>Add</button>
+                                            </Card.Body>
+                                        </Card>
+                                    </div>
+                                ))}
                         </div>
                     }
 
-
-
-                    {/* <Form.Group>
-                            <Form.Row>
-                                <Form.Label column lg={2}>
-                                    Item Name
+                    {typeOfButton == 2 &&
+                        <>
+                            <Form.Group>
+                                <Form.Row>
+                                    <Form.Label column lg={2}>
+                                        Item Name
                                 </Form.Label>
-                                <Col>
-                                    <Form.Control name="name" type="text" placeholder="Item name" value={values.name || ""} onChange={ev => handleOnChange(ev)} />
-                                </Col>
-                            </Form.Row>
-                        </Form.Group>
-                        <Form.Group>
-                            <Form.Row>
-                                <Form.Label column lg={2}>
-                                    Quantity
+                                    <Col>
+                                        <Form.Control name="name" type="text" placeholder="Item name" value={values.name || ""} onChange={ev => handleOnChange(ev)} />
+                                    </Col>
+                                </Form.Row>
+                            </Form.Group>
+                            <Form.Group>
+                                <Form.Row>
+                                    <Form.Label column lg={2}>
+                                        Quantity
                                 </Form.Label>
-                                <Col>
-                                    <Form.Control name="qty" type="number" placeholder="Quantity" value={values.qty || 0} onChange={ev => handleOnChange(ev)} />
-                                </Col>
-                            </Form.Row>
-                        </Form.Group>
-                        <Form.Group>
-                            <Form.Row>
-                                <Form.Label column lg={2}>
-                                    Amount
+                                    <Col>
+                                        <Form.Control name="qty" type="number" placeholder="Quantity" value={values.qty || 0} onChange={ev => handleOnChange(ev)} />
+                                    </Col>
+                                </Form.Row>
+                            </Form.Group>
+                            <Form.Group>
+                                <Form.Row>
+                                    <Form.Label column lg={2}>
+                                        Amount
                                 </Form.Label>
-                                <Col>
-                                    <Form.Control name="amount" type="text" placeholder="amount" value={values.amount || ""} onChange={ev => handleOnChange(ev)} />
-                                </Col>
-                            </Form.Row>
-                        </Form.Group>
-                        <Form.Group>
-                            <Form.Row>
-                                <Form.Label column lg={2}>
-                                    UOM
+                                    <Col>
+                                        <Form.Control name="amount" type="text" placeholder="amount" value={values.amount || ""} onChange={ev => handleOnChange(ev)} />
+                                    </Col>
+                                </Form.Row>
+                            </Form.Group>
+                            <Form.Group>
+                                <Form.Row>
+                                    <Form.Label column lg={2}>
+                                        UOM
                                 </Form.Label>
-                                <Col>
-                                    <Form.Control name="unitOfMeasure" type="text" placeholder="ex: gal" value={values.unitOfMeasure || ""} onChange={ev => handleOnChange(ev)} />
-                                </Col>
-                            </Form.Row>
-                        </Form.Group>
-                        <Form.Group>
-                            <Form.Row>
-                                <Form.Label column lg={2}>
-                                    Aisle
+                                    <Col>
+                                        <Form.Control name="unitOfMeasure" type="text" placeholder="ex: gal" value={values.unitOfMeasure || ""} onChange={ev => handleOnChange(ev)} />
+                                    </Col>
+                                </Form.Row>
+                            </Form.Group>
+                            <Form.Group>
+                                <Form.Row>
+                                    <Form.Label column lg={2}>
+                                        Aisle
                                 </Form.Label>
-                                <Col>
-                                    <Form.Control name="aisle" type="text" placeholder="aisle" value={values.aisle || ""} onChange={ev => handleOnChange(ev)} />
-                                </Col>
-                            </Form.Row>
-                        </Form.Group>
-                        <Form.Group>
-                            <Form.Row>
-                                <Form.Label column lg={2}>
-                                    Price
+                                    <Col>
+                                        <Form.Control name="aisle" type="text" placeholder="aisle" value={values.aisle || ""} onChange={ev => handleOnChange(ev)} />
+                                    </Col>
+                                </Form.Row>
+                            </Form.Group>
+                            <Form.Group>
+                                <Form.Row>
+                                    <Form.Label column lg={2}>
+                                        Price
                                 </Form.Label>
-                                <Col>
-                                    <Form.Control name="price" type="text" placeholder="Price" value={values.price || 0} onChange={ev => handleOnChange(ev)} />
-                                </Col>
-                            </Form.Row>
-                        </Form.Group>
-                        <Form.Group>
-                            <Form.Row>
-                                <Form.Label column lg={2}>
-                                    Total price
+                                    <Col>
+                                        <Form.Control name="price" type="text" placeholder="Price" value={values.price || 0} onChange={ev => handleOnChange(ev)} />
+                                    </Col>
+                                </Form.Row>
+                            </Form.Group>
+                            <Form.Group>
+                                <Form.Row>
+                                    <Form.Label column lg={2}>
+                                        Total price
                                 </Form.Label>
-                                <Col>
-                                    <Form.Control readOnly name="price" type="text" placeholder="Price" value={values.qty * values.price || 0} onChange={ev => handleOnChange(ev)} />
-                                </Col>
-                            </Form.Row>
-                        </Form.Group>
-                        <Form.Group>
-                            <Form.Row>
-                                <Form.Label column lg={2}>
-                                    Notes
+                                    <Col>
+                                        <Form.Control readOnly name="price" type="text" placeholder="Price" value={values.qty * values.price || 0} onChange={ev => handleOnChange(ev)} />
+                                    </Col>
+                                </Form.Row>
+                            </Form.Group>
+                            <Form.Group>
+                                <Form.Row>
+                                    <Form.Label column lg={2}>
+                                        Notes
                                 </Form.Label>
-                                <Col>
-                                    <Form.Control name="notes" type="text" placeholder="Notes" value={values.notes || ""} onChange={ev => handleOnChange(ev)} />
-                                </Col>
-                            </Form.Row>
-                        </Form.Group> */}
+                                    <Col>
+                                        <Form.Control name="notes" type="text" placeholder="Notes" value={values.notes || ""} onChange={ev => handleOnChange(ev)} />
+                                    </Col>
+                                </Form.Row>
+                            </Form.Group>
+                        </>
+                    }
                 </Modal.Body>
                 <Modal.Footer>
 
-                    <span onClick={() => setPaginationStart(paginationStart - 50)}>Left {pagination.start} </span> {" "}
-                    <span onClick={() => setPaginationStart(paginationStart + 50)}>Right {pagination.start + 50}</span> {" "}
+                    {results.length > 0 &&
+                        <div className="pull-left mr-auto">
+                            <span onClick={(e) => onClickSetPaginationStart(e, 'back')} className="pointer"><i className="fa fa-angle-double-left" aria-hidden="true"></i> Left {paginationStart} </span> {' '} | {' '}
+                            <span onClick={(e) => onClickSetPaginationStart(e, 'foward')} className="pointer">Right <i className="fa fa-angle-double-right" aria-hidden="true"></i> {paginationStart + 50}</span> {' '}
+                            Total: {pagination.total}
+                        </div>
+                    }
 
-                        total: {pagination.total}
-
-                    <Form.Group >
-                        <Col sm={{ span: 0, offset: 0 }}>
-                            <Form.Check label="Close on submit" name="closeOnClick" onChange={ev => handleOnChangeOnClose(ev)} />
-                        </Col>
-                    </Form.Group>
                     <Button variant="secondary" onClick={handleClose}> Close </Button>
                     {
                         {
-                            'Add': <Button variant="primary" onClick={onClickSaveItems}> Add Item </Button>
-                            , 'Edit':
+                            'Edit':
                                 <>
                                     <Button variant="primary" onClick={onClickUpdateItem}> Update Item </Button>
                                     <Button variant="danger" onClick={onClickDeleteItem}> Delete Item </Button>
