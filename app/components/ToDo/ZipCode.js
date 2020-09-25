@@ -25,11 +25,11 @@ const ZipCode = props => {
 
     useEffect(() => {
         let locationInfo = JSON.parse(localStorage.getItem("GroceryToDo"));
-        if(locationInfo) {
+        if(locationInfo && show) {
             setZipCode(locationInfo.address.zipCode);
             fetchData()
         }
-    },[]);
+    },[show]);
 
     const handleClick = (event) => {
         setShow(!show);
@@ -44,12 +44,12 @@ const ZipCode = props => {
 
     return (
         <div ref={ref}>
-            <Button onClick={handleClick}>{zipCode ? zipCode : 'Set zip code'}</Button>
+            <Button onClick={handleClick}><i className="fa fa-location-arrow" aria-hidden="true"></i>  {zipCode ? zipCode : 'Set zip code'}</Button>
 
             <Overlay
                 show={show}
                 target={target}
-                placement="bottom"
+                placement="right"
                 container={ref.current}
                 containerPadding={20}
 
@@ -61,7 +61,7 @@ const ZipCode = props => {
                         <Form autoComplete="off" onSubmit={fetchData}>
                             <InputGroup>
                                 <InputGroup.Prepend>
-                                    <InputGroup.Text id="basic-addon1" className="btn-orange" onClick={fetchData}>Zip Code</InputGroup.Text>
+                                    <InputGroup.Text id="basic-addon1" className="btn-orange pointer" onClick={fetchData}> Zip Code</InputGroup.Text>
                                 </InputGroup.Prepend>
                                 <Form.Control name="searchTerm" type="search" placeholder="Enter zip code" value={zipCode} onChange={e => setZipCode(e.target.value)} />
                             </InputGroup>
