@@ -21,7 +21,7 @@ const MoveItem = props => {
 
         <Modal
             {...props}
-            size="lg"
+            size="md"
             aria-labelledby="contained-modal-title-vcenter"
             centered
         >
