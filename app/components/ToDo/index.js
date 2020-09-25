@@ -258,7 +258,7 @@ class ToDo extends Component {
         try {
             await repo.ItemService.deleteBulkItemsById(listId);
             this.setState({ items: this.state.items.filter(x => x.listId !== listId) }, () => this.updateItemSocket());
-            NotificationManager.success('Successfylly deleted bulk items');
+            NotificationManager.success('Successfully deleted bulk items');
         } catch (e) {
             this.displayErrorMessage()
         }
@@ -269,7 +269,7 @@ class ToDo extends Component {
         try {
             let res = await repo.ItemService.duplicateItemOrItem(this.state.currentUser, this.state.currentView._id, duplicatedItem);
             this.setState({ items: this.state.items.concat(res.data) }, () => this.updateItemSocket());
-            NotificationManager.success('Successfylly duplicated item');
+            NotificationManager.success('Successfully duplicated item');
         } catch (e) {
             this.displayErrorMessage()
         }
@@ -281,7 +281,7 @@ class ToDo extends Component {
         try {
             let res = await repo.ItemService.duplicateItemOrItem(this.state.currentUser, this.state.currentView._id, duplicatedItem);
             this.setState({ items: this.state.items.concat(res.data) }, () => this.updateItemSocket());
-            NotificationManager.success('Successfylly duplicated bulk items');
+            NotificationManager.success('Successfully duplicated bulk items');
         } catch (e) {
             this.displayErrorMessage()
         }
@@ -291,7 +291,7 @@ class ToDo extends Component {
         try {
             await repo.ItemService.deleteBulkGroupItemsByAisle(listId, aisleName);
             this.setState({ items: this.state.items.filter(x => x.aisle !== aisleName) }, () => this.updateItemSocket());
-            NotificationManager.success('Successfylly deleted group');
+            NotificationManager.success('Successfully deleted group');
         } catch (e) {
             this.displayErrorMessage()
         }
@@ -312,7 +312,7 @@ class ToDo extends Component {
         try {
             await repo.ItemService.moveItem(itemId, aisleName);
             this.setState({ items: this.state.items.map(el => (el._id == itemId ? { ...el, aisle: aisleName } : el)) }, () => this.updateItemSocket());
-            NotificationManager.success('Successfylly moved item');
+            NotificationManager.success('Successfully moved item');
         } catch (e) {
             this.displayErrorMessage()
         }
@@ -330,7 +330,7 @@ class ToDo extends Component {
         return (
             <>
                 <ToDoStyles />
-                <div className="container" style={{ paddingTop: "80px", paddingBottom: "60px" }}>
+                <div className="container" style={{ paddingTop: "80px", paddingBottom: "84px" }}>
 
                     <div className="row">
                         <div className="col-lg-3 d-none d-sm-block">
