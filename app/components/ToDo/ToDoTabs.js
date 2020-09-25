@@ -19,7 +19,7 @@ const ToDoTabs = ({ match }) => {
         }, {
             name: "Meal Plan",
             path: "MealPlan",
-            icon: "fa fa-heart"
+            icon: "fa fa-file-text-o"
         }
     ];
 
