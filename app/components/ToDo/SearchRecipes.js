@@ -9,11 +9,11 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
+import { NotificationManager } from 'react-notifications';
 
 import RepositoryWrapper from '../../services/RepositoryWrapper';
 const repo = new RepositoryWrapper();
 
-import { NotificationManager } from 'react-notifications';
 
 class SearchRecipes extends Component {
 
@@ -55,7 +55,8 @@ class SearchRecipes extends Component {
           console.log(res)
           this.setState({ details: res.data, recipeList: [] });
         } catch (e) {
-          console.log(e)
+          console.log(e.response)
+          NotificationManager.error("Something went wrong");
         }
         break;
       case 'Search by recipe name':
@@ -67,7 +68,8 @@ class SearchRecipes extends Component {
           }
           this.setState({ recipeList: res.data.results, limit: res.data.number, startFrom: res.data.offset, totalResults: res.data.totalResults });
         } catch (e) {
-          console.log(e)
+          console.log(e.response)
+          NotificationManager.error("Something went wrong");
         }
         break;
     }
@@ -78,7 +80,8 @@ class SearchRecipes extends Component {
       const res = await repo.SpoonacularService.getRecipeInfoById(recipeId);
       this.setState({ details: res.data });
     } catch (e) {
-      console.log(e)
+      console.log(e.response)
+      NotificationManager.error("Something went wrong");
     }
   }
 
@@ -104,18 +107,18 @@ class SearchRecipes extends Component {
       veryPopular: details.veryPopular,
       image: details.image,
       pricePerServing: details.pricePerServing,
-      instructions: details.instructions,
+      instructions: details.instructions ? details.instructions : "",
       recipe: details.recipe,
       id: details.id,
       userId: this.props.currentUserId
     }
 
     try {
-
       await repo.RecipeService.addRecipeAction(params);
       NotificationManager.success('Receipe saved');
     } catch (e) {
-      console.log(e)
+      console.log(e.response)
+      NotificationManager.error("Something went wrong");
     }
   }
 
@@ -211,7 +214,7 @@ class SearchRecipes extends Component {
                 <Card.Title>{this.state.details.title}</Card.Title>
 
                 <Card.Title> Summary: </Card.Title>
-                <Card.Text dangerouslySetInnerHTML={{__html: this.state.details.summary}} />
+                <Card.Text dangerouslySetInnerHTML={{ __html: this.state.details.summary }} />
 
                 <Card.Title> Cooking Time: </Card.Title>
                 <Card.Text> {this.state.details.cookTime || 'N/A'} </Card.Text>
@@ -220,7 +223,7 @@ class SearchRecipes extends Component {
                 <Card.Text> {this.state.details.servings} </Card.Text>
 
                 <Card.Title> Instructions: </Card.Title>
-                <Card.Text> {this.state.details.instructions|| 'No Instructions Added'} </Card.Text>
+                <Card.Text> {this.state.details.instructions || 'No Instructions Added'} </Card.Text>
 
                 <Card.Title> Steps: </Card.Title>
                 <ul> {this.getSteps() || 'No Steps Added'} </ul>
