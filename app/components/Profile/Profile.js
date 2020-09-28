@@ -123,11 +123,7 @@ const Profile = ({ currentUser }) => {
                                             <Form.Control value={userData.zipCode} name="zipCode" onChange={handleOnChange}/>
                                         </Form.Group>
                                     </Form.Row>
-
-                                    <Form.Group id="formGridCheckbox">
-                                        <Form.Check type="checkbox" label="Check me out" />
-                                    </Form.Group>
-
+                                    
                                     <Button className="btn-orange" type="button" onClick={saveUserInfo}>
                                         Save
                                     </Button>
