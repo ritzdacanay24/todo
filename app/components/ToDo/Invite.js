@@ -74,9 +74,15 @@ const Invite = props => {
         return res;
     }
 
+    const deleteSubscriber = async (user, index) => {
+        await repo.ListService.deleteSubscriber(props.currentView._id, user._id);
+        NotificationManager.success(user.firstName + ' is no longer subscribed to this list');
+        setShow(!show);
+    }
+
     return (
         <div ref={ref}>
-            <Button onClick={handleClick} className="float-right btn-orange"><i className="fa fa-users" aria-hidden="true"></i> Invite</Button>
+            <Button onClick={handleClick} className="float-right btn-orange"><i className="fa fa-users" aria-hidden="true"></i> Invite </Button>
 
             <Overlay
                 show={show}
@@ -86,7 +92,7 @@ const Invite = props => {
                 containerPadding={20}
             >
                 <Popover id="popover-contained" className="shadow invite" style={{ position: "relative" }}>
-                    <Popover.Title as="h1">Invite to List </Popover.Title>
+                    <Popover.Title as="h1">Invite to List <span className="float-right" onClick={() => setShow(!show)}> x </span></Popover.Title>
                     <Popover.Content>
                         <input
                             type="search"
@@ -109,7 +115,9 @@ const Invite = props => {
                                 let buttonResults = getButtonDisplayMessage(user);
                                 return (
                                     <li key={index} className="list-group list-group-flush list-group-item pointer">
-                                        <Image src={log} roundedCircle style={{ width: "30px" }} /> {" "} {user.firstName} <br /> {user.email} <br />
+                                        <Image src={log} roundedCircle style={{ width: "30px" }} /> {" "} {user.firstName} <br /> {user.email}
+                                        { user.subscribedTo && <span onClick={() => deleteSubscriber(user, index)} className="text-danger float-right" title="Delete Subscriber"> X </span>}
+                                        <br />
                                         <Button onClick={(e) => invite(e, user)} className="btn-sm btn-orange" block disabled={buttonResults.isDisabled}>{buttonResults.buttonMessage}</Button>
                                     </li>
                                 )

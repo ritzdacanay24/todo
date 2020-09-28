@@ -82,7 +82,7 @@ const CreateListSettings = ({ list, updateList, deleteList }) => {
                             {!list.subscribers.length && <li>No subscribers</li>}
                             {list.subscribers.length > 0 && list.subscribers.map((list, index) => {
                                 return (
-                                    <li>{list.userId} ({list.isSubscribed ? 'Subscribed' : 'Pending'})</li>
+                                    <li key={index}>{list.userId} ({list.isSubscribed ? 'Subscribed' : 'Pending'})</li>
                                 )
                             })}
                         </ul>

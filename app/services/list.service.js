@@ -25,9 +25,13 @@ class ListService {
   async saveSubscribers(lsitId, toUser) {
     return await API.put(`lists/subscribers/${lsitId}/${toUser}`);
   }
-
+  
   async getSubscribers(userId, listId) {
     return await API.get(`lists/getSubscribers/${userId}/${listId}`);
+  }
+
+  async deleteSubscriber(listId, userId) {
+    return await API.delete(`lists/subscribers/${listId}/${userId}`);
   }
   
 }
