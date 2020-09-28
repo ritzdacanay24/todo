@@ -39,9 +39,10 @@ const Invite = props => {
     const handleClick = (event) => {
         setShow(!show);
         setTarget(event.target);
+        event.persist();
     };
 
-    const invite = async user => {
+    const invite = async (e, user) => {
         let params = {
             fromEmail: props.currentUser.email,
             fromId: props.currentUser._id,
@@ -51,6 +52,7 @@ const Invite = props => {
         }
         await repo.ListService.listInvite(params);
         NotificationManager.success('Invite sent');
+        setShow(!show);
     }
 
     const getButtonDisplayMessage = (user) => {
@@ -84,7 +86,7 @@ const Invite = props => {
                 containerPadding={20}
             >
                 <Popover id="popover-contained" className="shadow invite" style={{ position: "relative" }}>
-                    <Popover.Title as="h1">Invite to List (Under construction) </Popover.Title>
+                    <Popover.Title as="h1">Invite to List </Popover.Title>
                     <Popover.Content>
                         <input
                             type="search"
@@ -108,7 +110,7 @@ const Invite = props => {
                                 return (
                                     <li key={index} className="list-group list-group-flush list-group-item pointer">
                                         <Image src={log} roundedCircle style={{ width: "30px" }} /> {" "} {user.firstName} <br /> {user.email} <br />
-                                        <Button onClick={() => invite(user)} className="btn-sm btn-orange" block disabled={buttonResults.isDisabled}>{buttonResults.buttonMessage}</Button>
+                                        <Button onClick={(e) => invite(e, user)} className="btn-sm btn-orange" block disabled={buttonResults.isDisabled}>{buttonResults.buttonMessage}</Button>
                                     </li>
                                 )
                             })}
