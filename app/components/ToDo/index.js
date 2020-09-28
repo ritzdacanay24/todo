@@ -351,7 +351,7 @@ class ToDo extends Component {
                             {
                                 !currentView._id &&
                                 <div className="card">
-                                    <div className="card-body" style={{ minHeight: "calc(100vh - 142px)", margin: "0 auto"}}>
+                                    <div className="card-body" style={{ minHeight: "calc(100vh - 142px)", margin: "0 auto" }}>
                                         <h4>Please select a list on the left to view the details</h4>
                                     </div>
                                 </div>
@@ -377,7 +377,7 @@ class ToDo extends Component {
                                                     calculateTotalCost={this.calculateTotalCost}
                                                 />
                                             </li>
-                                            <li><Invite currentUser={this.props.currentUser} currentView={currentView}/> </li>
+                                            <li><Invite currentUser={this.props.currentUser} currentView={currentView} /> </li>
                                         </ul>
 
                                     </div>
@@ -416,6 +416,7 @@ class ToDo extends Component {
                                                     currentUserId={currentUser}
                                                     currentView={currentView}
                                                     imageBaseUrl={imageBaseUrl}
+                                                    getItems={this.getItems}
                                                     {...this.props} />,
                                                 'MealPlan': <MealPlan
                                                     currentUserId={currentUser}

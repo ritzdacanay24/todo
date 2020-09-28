@@ -4,11 +4,11 @@ import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Image from 'react-bootstrap/Image';
 import queryString from 'query-string'
+import { NotificationManager } from 'react-notifications';
 
 import RepositoryWrapper from '../../services/RepositoryWrapper';
 const repo = new RepositoryWrapper();
 
-import { NotificationManager } from 'react-notifications';
 
 export default class RecipeDetail extends Component {
 
@@ -55,6 +55,7 @@ export default class RecipeDetail extends Component {
         try {
             await repo.ItemService.addBulkItems(currentUserId, currentView._id, details.ingredients)
             NotificationManager.success('Items added to ' + currentView.name);
+            this.props.getItems(this.props.currentView._id)
         } catch (e) {
             console.log(e)
         }
