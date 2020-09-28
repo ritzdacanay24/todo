@@ -7,7 +7,7 @@
 
 import React from 'react';
 import './styles.css';
-import searchRecipeVideo from '../../videos/searchForRecipes.mp4';
+import searchRecipeVideo from '../../videos/searchGroceryItems.mp4';
 import randomRecipes from '../../videos/randomRecipes.mp4';
 import realTimeUpdates from '../../videos/realTimeUpdates.mp4';
 import { Link } from 'react-router-dom';
@@ -15,37 +15,17 @@ import { Link } from 'react-router-dom';
 export default function HomePage(props) {
 
   const groceryStores = [
-    "https://developer.kroger.com/assets/logos/bakers.svg",
-    "https://developer.kroger.com/assets/logos/frys.svg",
-    "https://developer.kroger.com/assets/logos/dillons.svg",
-    "https://developer.kroger.com/assets/logos/copps.svg",
     "https://developer.kroger.com/assets/logos/food4less.svg",
     "https://developer.kroger.com/assets/logos/smiths.svg",
-    "https://developer.kroger.com/assets/logos/gerbessuperscript.svg",
     "https://developer.kroger.com/assets/logos/kroger.svg",
-    "https://developer.kroger.com/assets/logos/payless.svg",
-    "https://developer.kroger.com/assets/logos/kingsoopers.svg",
-    "https://developer.kroger.com/assets/logos/jayc.svg",
-    "https://developer.kroger.com/assets/logos/homechef.svg",
-    "https://developer.kroger.com/assets/logos/qfc.svg",
-    "https://developer.kroger.com/assets/logos/fredmeyer.svg",
-    "https://developer.kroger.com/assets/logos/citymarket.svg",
     "https://developer.kroger.com/assets/logos/foodsco.svg",
-    "https://developer.kroger.com/assets/logos/picknsave.svg",
-    "https://developer.kroger.com/assets/logos/harristeeter.svg",
-    "https://developer.kroger.com/assets/logos/ruler.svg",
-    "https://developer.kroger.com/assets/logos/metromarket.svg",
-    "https://developer.kroger.com/assets/logos/owens.svg",
-    "https://developer.kroger.com/assets/logos/ralphs.svg",
-    "https://developer.kroger.com/assets/logos/roundys.svg",
     "https://developer.kroger.com/assets/logos/marianos.svg"
-
   ];
 
   const mapImages = () => {
     return (
       groceryStores.map((store, index) => (
-        <div className="col-lg-2" key={index}>
+        <div className="col" key={index}>
           <img src={store} style={{ width: "100px" }} />
         </div>
       ))
@@ -59,7 +39,7 @@ export default function HomePage(props) {
         <div className="container h-100">
           <div className="row">
             <div className="col-lg-12 text-center">
-              <h2 className="text-uppercase text-white font-weight-bold">The best grocery todo app in the world </h2>
+              <h2 className="text-uppercase text-white font-weight-bold">The best grocery todo list in the world </h2>
               <hr className="divider my-4" />
               <p className="text-white-75 font-weight-light mb-5">Search for grocery items in nearby grocery stores, save recipes for future meals, get total cost of grocery items and so much more!!</p>
             </div>
@@ -67,7 +47,7 @@ export default function HomePage(props) {
           <div className="row">
             <div className="col-lg-12 text-center">
 
-              <video width="1000" height="640" autoPlay muted loop className="shadow">
+              <video width="1000" height="640" muted className="shadow" controls>
                 <source src={searchRecipeVideo} type="video/mp4" />
                 <source src="movie.ogg" type="video/ogg" />
                     Your browser does not support the video tag.
@@ -94,7 +74,7 @@ export default function HomePage(props) {
         <div className="container-fluid p-25">
           <div className="row no-gutters">
             <div className="col-lg-6 col-sm-6">
-              <a className="portfolio-box" href="assets/img/portfolio/fullsize/1.jpg">
+              <a className="portfolio-box">
                 <img className="img-fluid shadow" src={require(`../../images/favMeals.png`)} alt="" />
               </a>
             </div>
@@ -102,9 +82,9 @@ export default function HomePage(props) {
             <div className="col-lg-6 col-sm-6">
               <section className="page-section">
                 <div className="container text-center">
-                  <h2 className="text-uppercase font-weight-bold">Never lose your favorite receipes again!</h2>
+                  <h2 className="text-uppercase font-weight-bold">Never lose your favorite recipes again!</h2>
                   <hr className="divider my-4" />
-                  <p className="font-weight-light mb-5">Save your recipes for your next family gatherings! Add the recipe to the list and let your spouce to the shopping</p>
+                  <p className="font-weight-light mb-5">Save your recipes for your next family gatherings! Add the recipe to the list and let your spouce to all the shopping!</p>
                 </div>
               </section>
             </div>
@@ -117,7 +97,7 @@ export default function HomePage(props) {
             <div className="col-lg-6 col-sm-6">
               <section className="page-section">
                 <div className="container text-center">
-                  <h2 className="text-uppercase font-weight-bold">Cant decide on your next meals for you family?</h2>
+                  <h2 className="text-uppercase font-weight-bold">Can't decide on your next meal for you family?</h2>
                   <hr className="divider my-4" />
                   <p className="font-weight-light mb-5">Let grocery todo decide them for you. It will randomly select a variety of meals. If you love it, click and add to the list.</p>
                 </div>
@@ -125,7 +105,7 @@ export default function HomePage(props) {
             </div>
             <div className="col-lg-6 text-center">
 
-              <video width="800" height="440" autoPlay muted loop className="shadow">
+              <video width="800" height="440" muted className="shadow"controls>
                 <source src={randomRecipes} type="video/mp4" />
                 <source src="movie.ogg" type="video/ogg" />
                     Your browser does not support the video tag.
@@ -140,7 +120,7 @@ export default function HomePage(props) {
           <div className="row no-gutters  justify-content-center">
             <div className="col-lg-6 text-center">
 
-              <video width="800" height="440" autoPlay muted loop className="shadow">
+              <video width="800" height="440" muted className="shadow"controls>
                 <source src={realTimeUpdates} type="video/mp4" />
                 <source src="movie.ogg" type="video/ogg" />
                     Your browser does not support the video tag.
@@ -171,7 +151,7 @@ export default function HomePage(props) {
           </div>
 
           <footer className="bg-dark py-2">
-            <div className="container"><div className="small text-center text-muted">Copyright © 2020 - Start Bootstrap</div></div>
+            <div className="container"><div className="small text-center text-muted"></div></div>
           </footer>
         </div>
       </section>
