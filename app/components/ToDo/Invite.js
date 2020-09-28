@@ -4,14 +4,11 @@ import Overlay from 'react-bootstrap/Overlay';
 import Popover from 'react-bootstrap/Popover';
 import Image from 'react-bootstrap/Image';
 import log from '../../images/default.jpg';
-
+import { NotificationManager } from 'react-notifications';
 import RepositoryWrapper from '../../services/RepositoryWrapper';
 const repo = new RepositoryWrapper();
 
-import { NotificationManager } from 'react-notifications';
-
 const Invite = props => {
-
     const [show, setShow] = useState(false);
     const [target, setTarget] = useState(null);
     const ref = useRef(null);
@@ -21,11 +18,12 @@ const Invite = props => {
 
     useEffect(() => {
         const fetchData = async function fetchData() {
-            const result = await repo.UserService.getAll();
+            const result = await repo.ListService.getSubscribers(props.currentUser._id, props.currentView._id);
             setData(result.data);
         }
-        fetchData();
-    }, []);
+        if (show) fetchData();
+        if (!show) setSearchTerm("");
+    }, [show]);
 
     useEffect(() => {
         const listResults = searchTerm && data.filter(data =>
@@ -51,13 +49,32 @@ const Invite = props => {
             toId: user._id,
             listId: props.currentView._id
         }
-        let res = await repo.ListService.listInvite(params);
+        await repo.ListService.listInvite(params);
         NotificationManager.success('Invite sent');
+    }
+
+    const getButtonDisplayMessage = (user) => {
+        let res = {};
+        res.isDisabled = false;
+        res.buttonMessage = "Invite";
+
+        if (user.subscribedTo && user.subscribedTo.isSubscribed) {
+            res.isDisabled = true;
+            res.buttonMessage = "Subscribed";
+        } else if (user.subscribedTo && !user.subscribedTo.isSubscribed) {
+            res.isDisabled = true;
+            res.buttonMessage = "Pending Invite";
+        } else if (props.currentUser._id == user._id) {
+            res.isDisabled = true;
+            res.buttonMessage = "Current User";
+        }
+
+        return res;
     }
 
     return (
         <div ref={ref}>
-            <Button onClick={handleClick} className="float-right btn-orange">Invite</Button>
+            <Button onClick={handleClick} className="float-right btn-orange"><i className="fa fa-users" aria-hidden="true"></i> Invite</Button>
 
             <Overlay
                 show={show}
@@ -87,10 +104,11 @@ const Invite = props => {
                                 </li>
                             }
                             {searchResults && searchResults.map((user, index) => {
+                                let buttonResults = getButtonDisplayMessage(user);
                                 return (
                                     <li key={index} className="list-group list-group-flush list-group-item pointer">
                                         <Image src={log} roundedCircle style={{ width: "30px" }} /> {" "} {user.firstName} <br /> {user.email} <br />
-                                        <Button onClick={() => invite(user)} className="btn-sm btn-orange" block>Send Invite</Button>
+                                        <Button onClick={() => invite(user)} className="btn-sm btn-orange" block disabled={buttonResults.isDisabled}>{buttonResults.buttonMessage}</Button>
                                     </li>
                                 )
                             })}

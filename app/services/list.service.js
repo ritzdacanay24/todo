@@ -25,6 +25,10 @@ class ListService {
   async saveSubscribers(lsitId, toUser) {
     return await API.put(`lists/subscribers/${lsitId}/${toUser}`);
   }
+
+  async getSubscribers(userId, listId) {
+    return await API.get(`lists/getSubscribers/${userId}/${listId}`);
+  }
   
 }
 
