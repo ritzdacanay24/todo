@@ -56,6 +56,10 @@ const CreateListSettings = ({ list, updateList, deleteList }) => {
         setValues(values => ({ ...values, [ev.target.name]: ev.target.value }));
     }
 
+    const handleArchive = () => {
+        alert('Under construction')
+    }
+
     return (
         <>
             <i className="fa fa-cog float-right" onClick={handleShow}></i>
@@ -71,9 +75,21 @@ const CreateListSettings = ({ list, updateList, deleteList }) => {
                             <Form.Text className="text-muted"> You can name the list whatever you want </Form.Text>
                         </Form.Group>
                     </Form>
+
+                    <div>
+                        Subscribers
+                        <ul>
+                            {!list.subscribers.length && <li>No subscribers</li>}
+                            {list.subscribers.length > 0 && list.subscribers.map((list, index) => {
+                                return (
+                                    <li>{list.userId} ({list.isSubscribed ? 'Subscribed' : 'Pending'})</li>
+                                )
+                            })}
+                        </ul>
+                    </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="warning"> Archive </Button>
+                    <Button variant="warning" onClick={handleArchive}> Archive </Button>
                     <Button variant="secondary" onClick={handleClose}> Close </Button>
                     <Button variant="primary" onClick={submit}> Save Changes </Button>
                     <Button variant="danger" onClick={submitDelete}> Delete </Button>
